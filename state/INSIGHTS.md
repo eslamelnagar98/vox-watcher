@@ -6,11 +6,21 @@ This file is rebuilt by the watcher. Times are in Africa/Cairo.
 
 | Watch | Dates listed | Showtimes | Bookable now | Listed, not bookable |
 |---|---|---|---|---|
-| Doomsday at Almaza | 16 Dec, 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec | 72 | 11 | 61 |
+| Doomsday at Almaza | 16 Dec, 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec | 72 | 13 | 59 |
 
 ## When does VOX open bookings?
 
-No booking openings recorded yet. After the first few, this section shows the day and hour pattern.
+**Most common:** Thursdays, between 15:00 and 15:59 (1 of 1 openings).
+
+Note: the watcher checks about every 5 minutes, so each time is accurate to roughly 5 to 10 minutes.
+
+| Day | Openings |
+|---|---|
+| Thursday | 1 |
+
+| Detected at | Movie | Showtimes opened | For dates |
+|---|---|---|---|
+| Thu 26 Nov 2026 15:50 | Avengers: Doomsday | 2 | 16 Dec, 19 Dec |
 
 ## How fast do showtimes sell out?
 
