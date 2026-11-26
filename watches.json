@@ -42,11 +42,7 @@
         "from": "2026-12-24",
         "to": "2027-01-15"
       },
-      "daysOfWeek": [
-        "Thu",
-        "Fri",
-        "Sat"
-      ],
+      "daysOfWeek": [],
       "experiences": [
         "IMAX"
       ],
