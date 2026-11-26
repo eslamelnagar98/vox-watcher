@@ -13,7 +13,7 @@ This file is rebuilt by the watcher. Times are in Africa/Cairo.
 
 **Most common:** Thursdays, between 15:00 and 15:59 (1 of 1 openings).
 
-Note: the watcher checks about every 5 minutes, so each time is accurate to roughly 5 to 10 minutes.
+Note: the watcher checks about every 2 minutes (up to about 8 between runs), so each time is accurate to a few minutes.
 
 | Day | Openings |
 |---|---|
