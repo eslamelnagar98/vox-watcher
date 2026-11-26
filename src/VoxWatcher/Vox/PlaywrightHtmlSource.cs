@@ -28,11 +28,10 @@ public sealed class PlaywrightHtmlSource(RequestPacer pacer, string timeZone, st
 
     public async Task<string> GetAsync(Uri url, CancellationToken ct)
     {
-        var page = await EnsureStartedAsync(ct);
-
         for (var attempt = 0; ; attempt++)
         {
             ct.ThrowIfCancellationRequested();
+            var page = await EnsureStartedAsync(ct);
             await pacer.WaitAsync(ct);
             RequestCount++;
 
@@ -63,6 +62,10 @@ public sealed class PlaywrightHtmlSource(RequestPacer pacer, string timeZone, st
             catch (PlaywrightException ex)
             {
                 failure = $"Browser could not load {url.PathAndQuery} ({ex.GetType().Name}: {FirstLine(ex.Message)})";
+
+                // A crashed or disconnected browser would fail every later request. Start a fresh one on the next attempt.
+                if (_page?.IsClosed != false || _browser?.IsConnected != true)
+                    await ResetAsync();
             }
 
             if (attempt >= RetryDelays.Length) throw new VoxSiteException(failure);
@@ -110,6 +113,7 @@ public sealed class PlaywrightHtmlSource(RequestPacer pacer, string timeZone, st
         }
         catch (PlaywrightException ex)
         {
+            await ResetAsync();
             throw new VoxSiteException($"Could not start the browser ({FirstLine(ex.Message)}). Is the \"{channel}\" browser installed?");
         }
         finally
@@ -118,11 +122,20 @@ public sealed class PlaywrightHtmlSource(RequestPacer pacer, string timeZone, st
         }
     }
 
+    /// <summary>Closes everything, ignoring errors from an already-dead browser, so the next request starts fresh.</summary>
+    private async Task ResetAsync()
+    {
+        var (context, browser, playwright) = (_context, _browser, _playwright);
+        (_page, _context, _browser, _playwright) = (null, null, null, null);
+
+        try { if (context is not null) await context.CloseAsync(); } catch (PlaywrightException) { }
+        try { if (browser is not null) await browser.CloseAsync(); } catch (PlaywrightException) { }
+        playwright?.Dispose();
+    }
+
     public async ValueTask DisposeAsync()
     {
-        if (_context is not null) await _context.CloseAsync();
-        if (_browser is not null) await _browser.CloseAsync();
-        _playwright?.Dispose();
+        await ResetAsync();
         _startLock.Dispose();
     }
 

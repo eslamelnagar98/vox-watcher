@@ -86,5 +86,13 @@ public static class ChangeDetector
     }
 
     /// <summary>Start time (local, e.g. Cairo) is at or before now.</summary>
-    private static bool HasStarted(Showtime s, DateTime nowLocal) => s.Date.ToDateTime(s.Time) <= nowLocal;
+    internal static bool HasStarted(Showtime s, DateTime nowLocal)
+    {
+        // VOX lists after-midnight shows (e.g. 00:00, 1:30am) under the previous day.
+        var start = s.Date.ToDateTime(s.Time);
+        if (s.Time < LastAfterMidnightStart) start = start.AddDays(1);
+        return start <= nowLocal;
+    }
+
+    private static readonly TimeOnly LastAfterMidnightStart = new(5, 0);
 }

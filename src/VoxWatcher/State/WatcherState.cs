@@ -43,6 +43,7 @@ public sealed class SessionState
 public sealed class HealthState
 {
     public int ConsecutiveFailures { get; set; }
+    public DateTimeOffset? FirstFailureAt { get; set; }
     public bool Alerted { get; set; }
     public string? LastError { get; set; }
 }

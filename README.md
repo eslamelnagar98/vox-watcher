@@ -16,7 +16,7 @@ It runs by itself on GitHub Actions every 5 minutes. No laptop needs to stay on.
   - new dates or showtimes being listed before they are bookable.
 - **Sends one grouped message per change**, not 20 separate pushes. The message has a button that opens the booking page of that exact session.
 - **Learns the pattern.** Every opening is logged with the day and time, so after a few weeks `state/INSIGHTS.md` tells you when VOX usually opens bookings and how fast each experience sells out.
-- **Protects you from silent failure.** If VOX changes its website or blocks the checks, you get a warning after 3 failed checks in a row, and another message when it works again.
+- **Protects you from silent failure.** If VOX changes its website or blocks the checks for 15 minutes (at least 3 failed checks in a row), you get a warning, and another message when it works again. A short blip sends nothing.
 - **Stays polite.** Only a few requests per run, with a pause between them. It never books anything for you.
 
 ## How it works
@@ -45,7 +45,7 @@ It runs by itself on GitHub Actions every 5 minutes. No laptop needs to stay on.
 | **Sold out: ...** | A bookable session sold out. Off by default | Low (2) |
 | **New on VOX: ...** | A movie you are watching appears on the site for the first time | High (4) |
 | **Watching: ...** | First run of a new watch: a summary of what it found | Low, or high if something is already bookable |
-| **VOX watcher has a problem** | 3 failed checks in a row | High (4) |
+| **VOX watcher has a problem** | Checks have failed for 15 minutes (at least 3 in a row) | High (4) |
 
 Example:
 
@@ -250,21 +250,32 @@ So the workflow runs with `VOX_FETCHER=browser` and `VOX_BROWSER_CHANNEL=chrome`
 
 ## Testing
 
-`tests/run_scenarios.py` runs the watcher end to end against real HTML captured from egy.voxcinemas.com and simulates a full story: baseline, booking opens, a new date appears, the session sells out, seats come back, the site breaks 3 times, and the site recovers. It also covers a single broken date page (no alert, nothing lost) and a show that already started (not counted as sold out). It checks the exact messages.
+From the repo root (needs the .NET 10 SDK):
 
 ```bash
-python3 tests/run_scenarios.py
+dotnet test
 ```
+
+The tests never touch the network or a browser, and never read your `watches.json`. They live in `tests/VoxWatcher.Tests` (xUnit v3):
+
+| File | What it covers |
+|---|---|
+| `ParserTests.cs` | Real pages captured from egy.voxcinemas.com: date tabs, bookable vs crossed-out times, booking links, the "no showtimes" page, the cinema and movie catalog |
+| `ChangeDetectorTests.cs` | Listed, opened, sold out, seats back; a show that already started is not a sell-out, including after-midnight shows |
+| `ScenarioTests.cs` | The whole watcher, run after run, against a fake VOX site: first-run summary, BOOK NOW, sell-out, seats back, a broken page (no alert, nothing lost, no repeat alerts later), the 15-minute problem alert and recovery |
+
+`.github/workflows/ci.yml` runs the tests on every pull request and on code changes to `main`. It is separate from the watcher, so a failing test never stops your alerts.
 
 ---
 
 ## Limits and good behavior
 
-- **Timing.** The schedule is every 5 minutes, but GitHub often starts scheduled runs 10 to 20 minutes late. To cover the gaps, each job checks about 4 times, every 60 to 75 seconds, over 4 minutes. State is committed once at the end of the job.
+- **Timing.** The schedule is every 5 minutes, but GitHub often starts scheduled runs 10 to 20 minutes late. To cover the gaps, each job checks about 3 times, every 100 to 115 seconds, over 4 minutes. State is committed once at the end of the job.
 - **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. `keepalive.yml` runs weekly and commits `state/keepalive.txt` if nothing was committed in the last 30 days.
 - **Blocking.** If VOX ever blocks GitHub's servers even for a real browser, runs fail and you get the problem alert. The fix then is to run the watcher from a home machine or another network.
-- **Load.** Each check makes about 1 request for the catalog, plus 1 per watched date, with a 1.2 second pause between requests.
-- **Sold out vs started.** When a show's start time passes, VOX makes it unavailable. That is not counted as a sell-out.
+- **Load.** Each check makes 1 request for the catalog, 1 for the watch's first page, plus 1 per other watched date, with a 1.2 second pause between requests.
+- **Broken pages.** A page that does not look like a real showtimes page (no showtimes and no "no showtimes" message) fails the check instead of being trusted, so a glitch never makes old showtimes look new.
+- **Sold out vs started.** When a show's start time passes, VOX makes it unavailable. That is not counted as a sell-out. Shows before 05:00 (VOX lists a 00:00 show under the previous day) count as starting the next night.
 - **No automatic booking.** The watcher only watches. Booking stays with you, which also keeps your VOX account safe.
 
 ## Troubleshooting
@@ -281,8 +292,12 @@ python3 tests/run_scenarios.py
 ## Project structure
 
 ```
+VoxWatcher.slnx                  solution (open this in Visual Studio or Rider)
+Directory.Build.props            settings shared by all projects (net10.0, nullable, warnings as errors)
+global.json                      .NET 10 SDK, and Microsoft.Testing.Platform for dotnet test
 watches.json                     what to watch (you edit this)
 .github/workflows/watch.yml      schedule, build, run, save state
+.github/workflows/ci.yml         build and test on pull requests and code changes
 .github/workflows/keepalive.yml  keeps the schedule from being disabled
 src/VoxWatcher/
   Program.cs                     entry point and modes
@@ -295,7 +310,11 @@ src/VoxWatcher/
   Engine/InsightsWriter.cs       INSIGHTS.md and CATALOG.md
   Notifications/                 message wording and ntfy publishing
   State/WatcherState.cs          state model and storage
-tests/
-  fixtures/source/               real HTML captured from the VOX site
-  run_scenarios.py               end-to-end scenario test
+tests/VoxWatcher.Tests/
+  ParserTests.cs                 real VOX HTML -> expected showtimes
+  ChangeDetectorTests.cs         opened, sold out, seats back, show started
+  ScenarioTests.cs               the whole watcher, run after run
+  TestSupport.cs                 fake VOX site and scenario runner
+  Fixtures/Real/                 pages captured from egy.voxcinemas.com
+  Fixtures/Scenario/             trimmed pages the fake site is built from
 ```

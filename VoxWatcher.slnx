@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/VoxWatcher/VoxWatcher.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/VoxWatcher.Tests/VoxWatcher.Tests.csproj" />
+  </Folder>
+</Solution>

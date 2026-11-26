@@ -16,6 +16,7 @@ public sealed class WatchRunner(
     DateTimeOffset now)
 {
     private const int HealthAlertAfterFailures = 3;
+    private static readonly TimeSpan HealthAlertAfter = TimeSpan.FromMinutes(15);
 
     private readonly DateTime _nowLocal = TimeZoneInfo.ConvertTime(now, tz).DateTime;
     private DateOnly Today => DateOnly.FromDateTime(_nowLocal);
@@ -97,8 +98,7 @@ public sealed class WatchRunner(
 
         var baseUrl = VoxUrls.Showtimes(config.Site, watch.Cinemas, watch.Movies, null);
         var first = await FetchAsync(baseUrl, ct);
-        if (!first.LooksValid)
-            throw new VoxSiteException($"[{watch.Name}] The showtimes page did not look right. VOX may have changed the layout.");
+        EnsureTrustworthy(first, requested: null, watch);
 
         var datesInScope = first.Dates.Where(d => d >= Today && watch.MatchesDate(d)).ToList();
         var showtimes = new List<Showtime>();
@@ -106,7 +106,7 @@ public sealed class WatchRunner(
         foreach (var date in datesInScope)
         {
             var page = date == first.PageDate ? first : await FetchAsync(VoxUrls.Showtimes(config.Site, watch.Cinemas, watch.Movies, date), ct);
-            if (!ReferenceEquals(page, first)) EnsureTrustworthy(page, date, watch);
+            EnsureTrustworthy(page, date, watch);
             showtimes.AddRange(page.Showtimes.Where(s => InScope(watch, s)));
         }
 
@@ -144,17 +144,19 @@ public sealed class WatchRunner(
     }
 
     /// <summary>
-    /// A glitchy date page must never reach the detector. If it did, its showtimes would be
+    /// A glitchy page must never reach the detector. If it did, its showtimes would be
     /// dropped from state and announced again as new (or BOOK NOW) on the next good run.
+    /// <paramref name="requested"/> is null for the first page, which has no date in its URL.
     /// </summary>
-    private static void EnsureTrustworthy(ShowtimesPage page, DateOnly requested, WatchDefinition watch)
+    private static void EnsureTrustworthy(ShowtimesPage page, DateOnly? requested, WatchDefinition watch)
     {
+        var which = requested is { } r ? $"The page for {r:ddd dd MMM}" : "The showtimes page";
         if (!page.LooksValid)
-            throw new VoxSiteException($"[{watch.Name}] The page for {requested:ddd dd MMM} did not look like a VOX showtimes page.");
-        if (page.PageDate != requested)
-            throw new VoxSiteException($"[{watch.Name}] Asked for {requested:dd MMM} but the page is for {page.PageDate:dd MMM}.");
+            throw new VoxSiteException($"[{watch.Name}] {which} did not look like a VOX showtimes page. VOX may have changed the layout.");
+        if (requested is { } date && page.PageDate != date)
+            throw new VoxSiteException($"[{watch.Name}] Asked for {date:dd MMM} but the page is for {page.PageDate:dd MMM}.");
         if (page.Showtimes.Count == 0 && !page.HasNoShowtimesMessage)
-            throw new VoxSiteException($"[{watch.Name}] The page for {requested:ddd dd MMM} had no showtimes and no 'no showtimes' message.");
+            throw new VoxSiteException($"[{watch.Name}] {which} had no showtimes and no 'no showtimes' message.");
     }
 
     private bool InScope(WatchDefinition watch, Showtime s)
@@ -189,15 +191,19 @@ public sealed class WatchRunner(
 
     private async Task RecordFailureAsync(WatcherState state, string error, CancellationToken ct)
     {
-        state.Health.ConsecutiveFailures++;
-        state.Health.LastError = error;
-        Console.WriteLine($"FAILED ({state.Health.ConsecutiveFailures} in a row): {error}");
+        var health = state.Health;
+        health.ConsecutiveFailures++;
+        health.FirstFailureAt ??= now;
+        health.LastError = error;
+        Console.WriteLine($"FAILED ({health.ConsecutiveFailures} in a row): {error}");
 
-        if (state.Health.ConsecutiveFailures >= HealthAlertAfterFailures && !state.Health.Alerted)
+        // Each job checks several times, so 3 failures can happen within minutes. Only alert for a lasting problem.
+        var failingFor = now - health.FirstFailureAt.Value;
+        if (health.ConsecutiveFailures >= HealthAlertAfterFailures && failingFor >= HealthAlertAfter && !health.Alerted)
         {
-            state.Health.Alerted = true;
+            health.Alerted = true;
             await notifier.SendAsync(new Notification("VOX watcher has a problem",
-                $"{state.Health.ConsecutiveFailures} checks failed in a row.\n{error}\nYou will get a message when it works again.",
+                $"{health.ConsecutiveFailures} checks failed in a row over {failingFor.TotalMinutes:0} minutes.\n{error}\nYou will get a message when it works again.",
                 4, ["warning"]), ct);
         }
     }
