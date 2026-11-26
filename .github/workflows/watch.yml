@@ -2,7 +2,7 @@ name: VOX watcher
 
 on:
   schedule:
-    - cron: "17 * * * *"         # hourly backup only: cron-job.org starts runs every 15 minutes (README: "A reliable timer")
+    - cron: "17 * * * *"         # hourly backup only: cron-job.org starts a run every 5 minutes (README: "A reliable timer")
   push:
     branches: [main]
     paths: ["watches.json", "src/**"]   # run right away when you change your watches
@@ -25,7 +25,7 @@ jobs:
   watch:
     # ubuntu-24.04, not ubuntu-latest: Google Chrome is preinstalled and Playwright supports it.
     runs-on: ubuntu-24.04
-    timeout-minutes: 20
+    timeout-minutes: 10
     env:
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
@@ -71,9 +71,9 @@ jobs:
         run: |
           MODE="${{ inputs.mode || 'watch' }}"
           if [ "$MODE" = "watch" ]; then
-            # A run starts every 15 minutes and keeps checking VOX every 100 to 115 s for about 11 minutes
-            # (about 7 checks), so it ends before the timer starts the next one.
-            dotnet run --project src/VoxWatcher -c Release --no-build -- watch --loop-seconds 660 --interval-seconds 100
+            # Short runs: two checks, 100 to 115 s apart, about 3 minutes in all. A run always ends
+            # before the 5-minute timer starts the next one, so runs never pile up.
+            dotnet run --project src/VoxWatcher -c Release --no-build -- watch --loop-seconds 150 --interval-seconds 100
           else
             dotnet run --project src/VoxWatcher -c Release --no-build -- "$MODE"
           fi

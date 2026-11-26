@@ -130,7 +130,7 @@ finally
     if (source is IAsyncDisposable disposable) await disposable.DisposeAsync();
 }
 
-// Repeats the whole check inside one job: a run starts every 15 minutes and keeps checking until shortly before the next.
+// Repeats the whole check inside one job (two checks per run with the workflow's settings), sharing one browser.
 // Each pass is a new WatchRunner with a fresh "now". The browser (if any) is shared across passes.
 async Task RunWatchLoopAsync()
 {

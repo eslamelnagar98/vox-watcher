@@ -22,7 +22,7 @@ It runs by itself on GitHub Actions and checks VOX about every 2 minutes. No lap
 ## How it works
 
 ```
- every 15 min a run starts (cron-job.org; GitHub schedule as hourly backup), checking VOX every ~2 min
+ every 5 min a ~3-minute run starts (cron-job.org; GitHub schedule as hourly backup) and checks VOX twice
  GitHub Actions ──► VOX showtimes pages ──► parse showtimes ──► compare with state.json
                                                                        │
                        your iPhone ◄── ntfy push ◄── only if something changed
@@ -95,7 +95,7 @@ From then on it checks VOX about every 2 minutes, and you only hear from it when
 
 ## A reliable timer
 
-GitHub's own schedule (the `cron` line in `watch.yml`) is best effort: a new repository can wait hours for its first scheduled run, and busy periods skip runs. A free outside timer starts the watcher every 15 minutes instead, and each run keeps checking VOX about every 2 minutes until the next one starts. GitHub's schedule stays on as an hourly backup, in case the timer ever stops.
+GitHub's own schedule (the `cron` line in `watch.yml`) is best effort: a new repository can wait hours for its first scheduled run, and busy periods skip runs. A free outside timer starts the watcher every 5 minutes instead. Each run is short (two checks, about 3 minutes), so it always ends before the next one starts. GitHub's schedule stays on as an hourly backup, in case the timer ever stops.
 
 **1. A token that can only start the watcher**
 
@@ -109,18 +109,18 @@ GitHub's own schedule (the `cron` line in `watch.yml`) is best effort: a new rep
 
 1. Make a free account at [cron-job.org](https://cron-job.org) and choose **Create cronjob**.
 2. URL: `https://api.github.com/repos/eslamelnagar98/vox-watcher/actions/workflows/watch.yml/dispatches`
-3. Execution schedule: **every 15 minutes**.
+3. Execution schedule: **every 5 minutes**.
 4. Advanced:
    - Request method: **POST**
    - Headers: `Authorization` = `Bearer <your token>`, `Accept` = `application/vnd.github+json`, `X-GitHub-Api-Version` = `2022-11-28`
    - Request body: `{"ref":"main"}`
 5. Turn on failure notifications, save, and press **Test run**. The answer should be **204 No Content**.
 
-Within 15 minutes, **Actions** shows a run started by `workflow_dispatch`, and the web app's Setup page counts it.
+Within 5 minutes, **Actions** shows a run started by `workflow_dispatch`, and the web app's Setup page counts it.
 
 Good to know:
 
-- Each run checks VOX about 7 times over 11 to 13 minutes, so it ends before the timer's next trigger. When an extra trigger comes in (you press **Check now**, save a watch, or press **Test run**), it waits for the current run; if yet another arrives while it waits, GitHub cancels the waiting one, since the newer run does the same job. Those grey "cancelled" runs lose nothing.
+- Each run checks VOX twice in about 3 minutes, so it ends well before the timer's next trigger. When an extra trigger comes in (you press **Check now**, save a watch, or press **Test run**), it waits for the current run; if yet another arrives while it waits, GitHub cancels the waiting one, since the newer run does the same job. Those grey "cancelled" runs lose nothing.
 - When the token expires, the timer gets `401` and cron-job.org emails you. Make a new token and paste it into the job.
 
 ## The web app
@@ -341,7 +341,7 @@ To preview the web app locally with sample data, serve `web/` with `tests/web/sa
 
 ## Limits and good behavior
 
-- **Timing.** The [outside timer](#a-reliable-timer) starts a run every 15 minutes; GitHub's own schedule is an hourly backup that often starts late. Each run checks VOX every 100 to 115 seconds for about 11 minutes, so a booking opening is noticed within about 2 minutes most of the time, and within about 8 minutes at worst (the gap between two runs). State is committed once at the end of the run.
+- **Timing.** The [outside timer](#a-reliable-timer) starts a run every 5 minutes; GitHub's own schedule is an hourly backup that often starts late. Each run checks VOX twice, about 2 minutes apart, so a booking opening is noticed within about 3 minutes. State is committed once at the end of the run.
 - **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. The watcher saves to the `state` branch, so `main` can stay quiet; `keepalive.yml` runs weekly and commits `.github/keepalive.txt` if nothing was committed to `main` in the last 30 days. The outside timer isn't affected either way.
 - **Blocking.** If VOX ever blocks GitHub's servers even for a real browser, runs fail and you get the problem alert. The fix then is to run the watcher from a home machine or another network.
 - **Load.** Each check makes 1 request for the catalog, 1 for the watch's first page, plus 1 per other watched date, with a 1.2 second pause between requests.
