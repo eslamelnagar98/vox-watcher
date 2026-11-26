@@ -2,7 +2,7 @@
 
 Get a push notification on your phone the moment VOX Cinemas Egypt opens booking for the movie, cinema, date and experience you care about. Book the good seats before everyone else.
 
-It runs by itself on GitHub Actions every 5 minutes. No laptop needs to stay on. Your phone only receives the alerts through the free [ntfy](https://ntfy.sh) app.
+It runs by itself on GitHub Actions every 5 minutes. No laptop needs to stay on. Your phone only receives the alerts through the free [ntfy](https://ntfy.sh) app, and a small web app at **https://eslamelnagar98.github.io/vox-watcher/** shows what can be booked, the watcher's health, and lets you add or change watches.
 
 ---
 
@@ -15,25 +15,27 @@ It runs by itself on GitHub Actions every 5 minutes. No laptop needs to stay on.
   - seats coming back on a sold-out session (people cancel, or unpaid seats are released),
   - new dates or showtimes being listed before they are bookable.
 - **Sends one grouped message per change**, not 20 separate pushes. The message has a button that opens the booking page of that exact session.
-- **Learns the pattern.** Every opening is logged with the day and time, so after a few weeks `state/INSIGHTS.md` tells you when VOX usually opens bookings and how fast each experience sells out.
+- **Learns the pattern.** Every opening is logged with the day and time, so after a few weeks the web app's Insights (and `INSIGHTS.md` on the `state` branch) tell you when VOX usually opens bookings and how fast each experience sells out.
 - **Protects you from silent failure.** If VOX changes its website or blocks the checks for 15 minutes (at least 3 failed checks in a row), you get a warning, and another message when it works again. A short blip sends nothing.
 - **Stays polite.** Only a few requests per run, with a pause between them. It never books anything for you.
 
 ## How it works
 
 ```
- every 5 min
- GitHub Actions ──► VOX showtimes pages ──► parse showtimes ──► compare with state/state.json
+ every 5 min (cron-job.org, GitHub schedule as backup)
+ GitHub Actions ──► VOX showtimes pages ──► parse showtimes ──► compare with state.json
                                                                        │
                        your iPhone ◄── ntfy push ◄── only if something changed
                                                                        │
-                                     state/ saved back to the repo ◄───┘
+                       "state" branch ◄── memory saved after each run ◄┘
+                             │
+                             └──► web app (GitHub Pages) reads it, and edits watches.json on main
 ```
 
 1. For each watch, it opens `https://egy.voxcinemas.com/showtimes?c=<cinema>&m=<movie>`.
 2. It reads the date tabs, then opens each date that matches your filters.
 3. For every showtime it reads: movie, cinema, experience, date, time, bookable or not, and the booking link.
-4. It compares this with what it saw last time, then sends alerts and saves the new state.
+4. It compares this with what it saw last time, then sends alerts and saves the new state to the `state` branch. `main` only changes when you change it.
 
 ## What you get on your phone
 
@@ -77,13 +79,71 @@ Tap the notification and the booking page opens directly.
    - Name: `NTFY_TOPIC`
    - Value: your topic name (only the name, not the link)
 2. **Settings > Actions > General > Workflow permissions**: choose **Read and write permissions** and save.
-3. Keep the repository **Public**. GitHub Actions minutes are free for public repos. A check every 5 minutes uses more minutes than a private repo gets for free. Nothing secret is stored in the code; the topic is a secret.
+3. **Settings > Pages > Build and deployment > Source**: choose **GitHub Actions** (for the web app).
+4. Keep the repository **Public**. GitHub Actions minutes are free for public repos. A check every 5 minutes uses more minutes than a private repo gets for free. Nothing secret is stored in the code; the topic is a secret.
 
 ### 3. First run
 
 1. **Actions > VOX watcher > Run workflow**, choose `test-notify`. Your phone should ring within a minute.
 2. Run it again with `watch`. You get a **Watching: ...** summary for each watch.
-3. From now on it runs every 5 minutes, and you only hear from it when something changes.
+3. Set up the [reliable 5-minute timer](#a-reliable-5-minute-timer) (5 minutes, once).
+4. Open the [web app](#the-web-app) on your phone, add it to your Home Screen, and save your token in Setup.
+
+From then on it checks every 5 minutes, and you only hear from it when something changes.
+
+---
+
+## A reliable 5-minute timer
+
+GitHub's own schedule (the `cron` line in `watch.yml`) is best effort: a new repository can wait hours for its first scheduled run, and busy periods skip runs. A free outside timer starts the watcher every 5 minutes instead. GitHub's schedule stays on as a backup.
+
+**1. A token that can only start the watcher**
+
+1. Open [github.com/settings/personal-access-tokens/new](https://github.com/settings/personal-access-tokens/new) (Settings > Developer settings > Fine-grained tokens).
+2. Name: `vox-watcher timer`. Expiration: the longest allowed.
+3. Repository access: **Only select repositories** > `vox-watcher`.
+4. Permissions > Repository permissions > **Actions: Read and write**. Nothing else.
+5. Generate, and copy the token.
+
+**2. The timer**
+
+1. Make a free account at [cron-job.org](https://cron-job.org) and choose **Create cronjob**.
+2. URL: `https://api.github.com/repos/eslamelnagar98/vox-watcher/actions/workflows/watch.yml/dispatches`
+3. Execution schedule: **every 5 minutes**.
+4. Advanced:
+   - Request method: **POST**
+   - Headers: `Authorization` = `Bearer <your token>`, `Accept` = `application/vnd.github+json`, `X-GitHub-Api-Version` = `2022-11-28`
+   - Request body: `{"ref":"main"}`
+5. Turn on failure notifications, save, and press **Test run**. The answer should be **204 No Content**.
+
+Within 5 minutes, **Actions** shows a run started by `workflow_dispatch`, and the web app's Setup page counts it.
+
+Good to know:
+
+- Each run takes about 5 minutes and checks VOX 3 times. A trigger that arrives during a run waits for it; GitHub cancels extra waiting runs, so a few grey "cancelled" runs are normal.
+- When the token expires, the timer gets `401` and cron-job.org emails you. Make a new token and paste it into the job.
+
+## The web app
+
+**https://eslamelnagar98.github.io/vox-watcher/** (on iPhone: Share > **Add to Home Screen**).
+
+| Tab | What it shows |
+|---|---|
+| **Now** | Every showtime you can book right now, soonest first, each with a **Book** button that opens the VOX booking page. Then the watcher's health: when it last checked, and any problem |
+| **Showtimes** | Every showtime in each watch's range: clear = bookable, face-down = listed but not bookable yet, struck through = sold out |
+| **Watches** | Your watches. Add, edit, pause or delete one by picking movies, cinemas, dates, days, formats and times. No JSON |
+| **Insights** | When VOX usually opens bookings (day and hour, Cairo time) and how fast each format sells out |
+| **Log** | Every change the watcher noticed, newest first |
+| **Setup** | Your token, a test alert, and whether the 5-minute timer is running |
+
+Reading needs nothing. Saving watches, **Check now** and **Send a test alert** need a GitHub token, saved once in Setup:
+
+1. Make a fine-grained token like the timer's, but with **Actions: Read and write** and **Contents: Read and write**, for this repository only.
+2. Paste it in **Setup > Your GitHub token**. It stays in that browser only and is only ever sent to GitHub.
+
+Saving a watch commits `watches.json` to `main`, which starts a check straight away; you get a **Watching** summary on your phone. The app writes plain JSON, so comments in `watches.json` aren't kept after a save from the app.
+
+The site is published by `.github/workflows/pages.yml` whenever `web/` changes.
 
 ---
 
@@ -137,12 +197,13 @@ Top-level `announceNewMovies: true` pushes a message whenever any new movie is a
 
 ### Finding slugs
 
-Two easy ways:
+Three easy ways:
 
-1. **From the website.** Pick a cinema and a movie on the VOX showtimes page and look at the address bar:
+1. **From the web app.** Watches > New watch lists every movie and cinema on VOX; just tick them.
+2. **From the website.** Pick a cinema and a movie on the VOX showtimes page and look at the address bar:
    `egy.voxcinemas.com/showtimes?c=city-centre-almaza&m=avengers-doomsday`
    The value after `c=` is the cinema slug. The value after `m=` is the movie slug.
-2. **From this repo.** Open `state/CATALOG.md`. It lists every cinema and movie slug on the site and is updated automatically.
+3. **From this repo.** Open [`CATALOG.md` on the `state` branch](https://github.com/eslamelnagar98/vox-watcher/blob/state/CATALOG.md). It lists every cinema and movie slug on the site and is updated automatically.
 
 A movie that is not on the site yet is fine. You get a warning in the **Watching** message, and then a **New on VOX** alert when it appears.
 
@@ -174,16 +235,18 @@ Exact dates for a family outing, only tell me when it is bookable:
 
 ---
 
-## Files the watcher writes (`state/`)
+## Files the watcher writes (the `state` branch)
+
+The watcher keeps its memory on a separate branch, [`state`](https://github.com/eslamelnagar98/vox-watcher/tree/state), so `main` only has your code and your watches. Each run clones it into `state/`, and pushes it back only when something changed.
 
 | File | What it is |
 |---|---|
-| `state/state.json` | Memory between runs: every showtime seen, bookable or not, and when it opened or sold out. Do not edit by hand |
-| `state/events.log` | One line per change, in Cairo time. Easy to read on the phone |
-| `state/INSIGHTS.md` | Current status per watch, **when VOX usually opens bookings**, and how fast each experience sells out |
-| `state/CATALOG.md` | All cinema and movie slugs currently on the site |
+| `state.json` | Memory between runs: every showtime seen, bookable or not, when it opened or sold out, and the watcher's health. Past showtimes are dropped, so it doesn't keep growing. Do not edit by hand |
+| `events.log` | One line per change, in Cairo time. Easy to read on the phone |
+| `INSIGHTS.md` | Current status per watch, **when VOX usually opens bookings**, and how fast each experience sells out |
+| `CATALOG.md` / `catalog.json` | All cinema and movie slugs currently on the site (the JSON feeds the web app's pickers) |
 
-Deleting `state/state.json` makes the next run a fresh, silent baseline.
+Deleting `state.json` on the `state` branch makes the next run a fresh, silent baseline. Deleting the whole branch is safe too: the next run starts it again.
 
 ### Learning when VOX opens bookings
 
@@ -205,7 +268,7 @@ Note: a crossed-out time on the VOX site can mean "sales not open yet" or "sold 
 |---|---|
 | `watch` | A normal check (same as the schedule) |
 | `test-notify` | Sends a test push to your phone |
-| `catalog` | Rebuilds `state/CATALOG.md` and prints all slugs in the run log |
+| `catalog` | Rebuilds `CATALOG.md` and `catalog.json` on the `state` branch and prints all slugs in the run log |
 
 **On your computer** (needs the .NET 10 SDK), from the repo root:
 
@@ -266,12 +329,20 @@ The tests never touch the network or a browser, and never read your `watches.jso
 
 `.github/workflows/ci.yml` runs the tests on every pull request and on code changes to `main`. It is separate from the watcher, so a failing test never stops your alerts.
 
+The web app's logic (filters, validation, the JSON it writes back) has its own tests, run with Node 20 or later:
+
+```bash
+node --test tests/web/model.test.mjs
+```
+
+To preview the web app locally with sample data, serve `web/` with `tests/web/sample/` mounted at `/sample/`, then open `http://localhost:<port>/?sample`. Sample mode only works on `localhost` and never saves anything.
+
 ---
 
 ## Limits and good behavior
 
-- **Timing.** The schedule is every 5 minutes, but GitHub often starts scheduled runs 10 to 20 minutes late. To cover the gaps, each job checks about 3 times, every 100 to 115 seconds, over 4 minutes. State is committed once at the end of the job.
-- **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. `keepalive.yml` runs weekly and commits `state/keepalive.txt` if nothing was committed in the last 30 days.
+- **Timing.** The [outside timer](#a-reliable-5-minute-timer) starts a run every 5 minutes; GitHub's own schedule is a backup that often starts 10 to 20 minutes late. Each run checks about 3 times, every 100 to 115 seconds, over 4 minutes, so VOX is checked about every 2 minutes. State is committed once at the end of the run.
+- **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. The watcher saves to the `state` branch, so `main` can stay quiet; `keepalive.yml` runs weekly and commits `.github/keepalive.txt` if nothing was committed to `main` in the last 30 days. The outside timer isn't affected either way.
 - **Blocking.** If VOX ever blocks GitHub's servers even for a real browser, runs fail and you get the problem alert. The fix then is to run the watcher from a home machine or another network.
 - **Load.** Each check makes 1 request for the catalog, 1 for the watch's first page, plus 1 per other watched date, with a 1.2 second pause between requests.
 - **Broken pages.** A page that does not look like a real showtimes page (no showtimes and no "no showtimes" message) fails the check instead of being trusted, so a glitch never makes old showtimes look new.
@@ -282,11 +353,13 @@ The tests never touch the network or a browser, and never read your `watches.jso
 
 | You see | Do this |
 |---|---|
-| Red run, "Config problems" | Fix `watches.json`. The log lists each problem |
+| Red run, "Config problems" | Fix `watches.json`. The log lists each problem. Edits from the web app are checked first, so this only happens after a hand edit |
 | Red X on **Save state** | Settings > Actions > General > Workflow permissions > Read and write |
 | Green runs but no pushes | The `NTFY_TOPIC` secret does not match the topic in the app. Check for spaces. Then run `test-notify` |
-| "Unknown cinema" warning | Use a slug from `state/CATALOG.md` |
+| "Unknown cinema" warning | Pick the cinema in the web app, or use a slug from `CATALOG.md` on the `state` branch |
 | "VOX watcher has a problem" | Open the latest run log. A 403 means blocking; "layout" means VOX changed the page and the parser needs an update |
+| Web app says "No successful check for N minutes" | The timer stopped: check the cron-job.org job (an expired token answers 401). Meanwhile, **Check now** in the app or **Run workflow** on GitHub |
+| Web app says the token isn't allowed | Give the token **Contents: Read and write** and **Actions: Read and write** for this repository, then paste it again in Setup |
 | Scheduled runs stopped | Actions tab > VOX watcher > Enable workflow |
 
 ## Project structure
@@ -295,10 +368,12 @@ The tests never touch the network or a browser, and never read your `watches.jso
 VoxWatcher.slnx                  solution (open this in Visual Studio or Rider)
 Directory.Build.props            settings shared by all projects (net10.0, nullable, warnings as errors)
 global.json                      .NET 10 SDK, and Microsoft.Testing.Platform for dotnet test
-watches.json                     what to watch (you edit this)
-.github/workflows/watch.yml      schedule, build, run, save state
+watches.json                     what to watch (you edit this, or the web app does)
+PRODUCT.md / DESIGN.md           what the web app is for, and its design system
+.github/workflows/watch.yml      the watcher: build, check VOX, save to the state branch
+.github/workflows/pages.yml      publishes web/ to GitHub Pages
 .github/workflows/ci.yml         build and test on pull requests and code changes
-.github/workflows/keepalive.yml  keeps the schedule from being disabled
+.github/workflows/keepalive.yml  keeps the backup schedule from being disabled
 src/VoxWatcher/
   Program.cs                     entry point and modes
   Configuration/WatchConfig.cs   config model, validation, filters
@@ -310,6 +385,11 @@ src/VoxWatcher/
   Engine/InsightsWriter.cs       INSIGHTS.md and CATALOG.md
   Notifications/                 message wording and ntfy publishing
   State/WatcherState.cs          state model and storage
+web/                             the web app (static, no build step)
+  index.html, styles.css         the page and its look
+  js/app.js                      sections, editor, actions
+  js/model.js                    filters, validation, parsing (shared rules with the C# code)
+  js/github.js                   reads and writes through the GitHub API
 tests/VoxWatcher.Tests/
   ParserTests.cs                 real VOX HTML -> expected showtimes
   ChangeDetectorTests.cs         opened, sold out, seats back, show started
@@ -317,4 +397,7 @@ tests/VoxWatcher.Tests/
   TestSupport.cs                 fake VOX site and scenario runner
   Fixtures/Real/                 pages captured from egy.voxcinemas.com
   Fixtures/Scenario/             trimmed pages the fake site is built from
+tests/web/
+  model.test.mjs                 tests for the web app's logic
+  sample/                        sample data for a local preview
 ```

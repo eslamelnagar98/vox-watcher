@@ -10,6 +10,7 @@ on:
     paths:
       - "src/**"
       - "tests/**"
+      - "web/**"
       - "VoxWatcher.slnx"
       - "Directory.Build.props"
       - "global.json"
@@ -33,5 +34,8 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - name: Test
+      - name: Test the watcher
         run: dotnet test -c Release
+
+      - name: Test the web app's logic
+        run: node --test tests/web/model.test.mjs

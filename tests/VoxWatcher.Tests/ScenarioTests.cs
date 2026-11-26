@@ -23,6 +23,11 @@ public sealed class ScenarioTests : IDisposable
         Assert.Equal("Watching: Doomsday at Almaza", n.Title);
         Assert.Equal(4, n.Priority); // something is already bookable
         Assert.Contains("Sun 20 Dec | CC Almaza | Standard: 3:30pm, 11:00pm", n.Message); // 11:45am is before time.after
+
+        // The web app's cinema and movie pickers read this file.
+        var catalog = _s.ReadStateFile("catalog.json");
+        Assert.Contains("\"Slug\": \"city-centre-almaza\"", catalog);
+        Assert.Contains("\"Name\": \"Avengers: Doomsday\"", catalog);
     }
 
     [Fact]

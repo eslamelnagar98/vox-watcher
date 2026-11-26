@@ -128,6 +128,8 @@ internal sealed class Scenario : IDisposable
 
     public string[] Events => File.Exists(Store.EventsLogPath) ? File.ReadAllLines(Store.EventsLogPath) : [];
 
+    public string ReadStateFile(string name) => File.ReadAllText(Path.Combine(_stateDir, name));
+
     /// <summary>One check at the given UTC time. Returns the notifications it sent.</summary>
     public async Task<List<Notification>> RunAsync(IHtmlSource site, string utc)
     {
