@@ -2,11 +2,20 @@ name: VOX watcher
 
 on:
   schedule:
-    - cron: "*/5 * * * *"   # every 5 minutes (GitHub may delay a few minutes)
-  workflow_dispatch:         # lets you run it by hand from the Actions tab
+    - cron: "*/5 * * * *"        # every 5 minutes (GitHub can start it a few minutes late)
+  push:
+    branches: [main]
+    paths: ["watches.json", "src/**"]   # run right away when you change your watches
+  workflow_dispatch:
+    inputs:
+      mode:
+        description: "What to run"
+        type: choice
+        options: [watch, test-notify, catalog]
+        default: watch
 
 permissions:
-  contents: write            # needed to save state/ back to the repo
+  contents: write                # the bot saves state/ back to the repo
 
 concurrency:
   group: vox-watcher
@@ -15,7 +24,11 @@ concurrency:
 jobs:
   watch:
     runs-on: ubuntu-latest
-    timeout-minutes: 5
+    timeout-minutes: 8
+    env:
+      DOTNET_NOLOGO: true
+      DOTNET_CLI_TELEMETRY_OPTOUT: true
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
     steps:
       - uses: actions/checkout@v4
 
@@ -23,14 +36,23 @@ jobs:
         with:
           dotnet-version: "10.0.x"
 
-      - name: Check VOX
+      - name: Build
+        run: dotnet build src/VoxWatcher -c Release -nologo -v q
+
+      - name: Run (${{ inputs.mode || 'watch' }})
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
-        run: dotnet run watch.cs
+          NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
+          NTFY_SERVER: ${{ vars.NTFY_SERVER }}
+        run: dotnet run --project src/VoxWatcher -c Release --no-build -- ${{ inputs.mode || 'watch' }}
 
       - name: Save state
+        if: always()
         run: |
           git config user.name "vox-bot"
           git config user.email "vox-bot@users.noreply.github.com"
           git add state
-          git diff --cached --quiet || (git commit -m "VOX dates changed" && git push)
+          if git diff --cached --quiet; then echo "Nothing changed."; exit 0; fi
+          git commit -m "state: $(TZ=Africa/Cairo date '+%a %d %b %H:%M')"
+          git pull --rebase --autostash
+          git push
