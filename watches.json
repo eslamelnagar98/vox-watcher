@@ -30,7 +30,7 @@
       }
     },
     {
-      "name": "Dune IMAX weekend evenings (example)",
+      "name": "Dune IMAX weekend evenings",
       "enabled": true,
       "cinemas": [
         "city-centre-almaza"
