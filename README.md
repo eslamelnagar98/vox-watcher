@@ -2,7 +2,7 @@
 
 Get a push notification on your phone the moment VOX Cinemas Egypt opens booking for the movie, cinema, date and experience you care about. Book the good seats before everyone else.
 
-It runs by itself on GitHub Actions every 5 minutes. No laptop needs to stay on. Your phone only receives the alerts through the free [ntfy](https://ntfy.sh) app, and a small web app at **https://eslamelnagar98.github.io/vox-watcher/** shows what can be booked, the watcher's health, and lets you add or change watches.
+It runs by itself on GitHub Actions and checks VOX about every 2 minutes. No laptop needs to stay on. Your phone only receives the alerts through the free [ntfy](https://ntfy.sh) app, and a small web app at **https://eslamelnagar98.github.io/vox-watcher/** shows what can be booked, the watcher's health, and lets you add or change watches.
 
 ---
 
@@ -22,7 +22,7 @@ It runs by itself on GitHub Actions every 5 minutes. No laptop needs to stay on.
 ## How it works
 
 ```
- every 5 min (cron-job.org, GitHub schedule as backup)
+ every 15 min a run starts (cron-job.org; GitHub schedule as hourly backup), checking VOX every ~2 min
  GitHub Actions ──► VOX showtimes pages ──► parse showtimes ──► compare with state.json
                                                                        │
                        your iPhone ◄── ntfy push ◄── only if something changed
@@ -80,22 +80,22 @@ Tap the notification and the booking page opens directly.
    - Value: your topic name (only the name, not the link)
 2. **Settings > Actions > General > Workflow permissions**: choose **Read and write permissions** and save.
 3. **Settings > Pages > Build and deployment > Source**: choose **GitHub Actions** (for the web app).
-4. Keep the repository **Public**. GitHub Actions minutes are free for public repos. A check every 5 minutes uses more minutes than a private repo gets for free. Nothing secret is stored in the code; the topic is a secret.
+4. Keep the repository **Public**. GitHub Actions minutes are free for public repos. Checking around the clock uses more minutes than a private repo gets for free. Nothing secret is stored in the code; the topic is a secret.
 
 ### 3. First run
 
 1. **Actions > VOX watcher > Run workflow**, choose `test-notify`. Your phone should ring within a minute.
 2. Run it again with `watch`. You get a **Watching: ...** summary for each watch.
-3. Set up the [reliable 5-minute timer](#a-reliable-5-minute-timer) (5 minutes, once).
+3. Set up the [reliable timer](#a-reliable-timer) (5 minutes, once).
 4. Open the [web app](#the-web-app) on your phone, add it to your Home Screen, and save your token in Setup.
 
-From then on it checks every 5 minutes, and you only hear from it when something changes.
+From then on it checks VOX about every 2 minutes, and you only hear from it when something changes.
 
 ---
 
-## A reliable 5-minute timer
+## A reliable timer
 
-GitHub's own schedule (the `cron` line in `watch.yml`) is best effort: a new repository can wait hours for its first scheduled run, and busy periods skip runs. A free outside timer starts the watcher every 5 minutes instead. GitHub's schedule stays on as a backup.
+GitHub's own schedule (the `cron` line in `watch.yml`) is best effort: a new repository can wait hours for its first scheduled run, and busy periods skip runs. A free outside timer starts the watcher every 15 minutes instead, and each run keeps checking VOX about every 2 minutes until the next one starts. GitHub's schedule stays on as an hourly backup, in case the timer ever stops.
 
 **1. A token that can only start the watcher**
 
@@ -109,18 +109,18 @@ GitHub's own schedule (the `cron` line in `watch.yml`) is best effort: a new rep
 
 1. Make a free account at [cron-job.org](https://cron-job.org) and choose **Create cronjob**.
 2. URL: `https://api.github.com/repos/eslamelnagar98/vox-watcher/actions/workflows/watch.yml/dispatches`
-3. Execution schedule: **every 5 minutes**.
+3. Execution schedule: **every 15 minutes**.
 4. Advanced:
    - Request method: **POST**
    - Headers: `Authorization` = `Bearer <your token>`, `Accept` = `application/vnd.github+json`, `X-GitHub-Api-Version` = `2022-11-28`
    - Request body: `{"ref":"main"}`
 5. Turn on failure notifications, save, and press **Test run**. The answer should be **204 No Content**.
 
-Within 5 minutes, **Actions** shows a run started by `workflow_dispatch`, and the web app's Setup page counts it.
+Within 15 minutes, **Actions** shows a run started by `workflow_dispatch`, and the web app's Setup page counts it.
 
 Good to know:
 
-- Each run takes about 4 minutes and checks VOX twice, so it ends before the timer's next trigger. When an extra trigger comes in (you press **Check now**, save a watch, or press **Test run**), it waits for the current run; if yet another arrives while it waits, GitHub cancels the waiting one, since the newer run does the same job. Those grey "cancelled" runs lose nothing.
+- Each run checks VOX about 7 times over 11 to 13 minutes, so it ends before the timer's next trigger. When an extra trigger comes in (you press **Check now**, save a watch, or press **Test run**), it waits for the current run; if yet another arrives while it waits, GitHub cancels the waiting one, since the newer run does the same job. Those grey "cancelled" runs lose nothing.
 - When the token expires, the timer gets `401` and cron-job.org emails you. Make a new token and paste it into the job.
 
 ## The web app
@@ -134,7 +134,7 @@ Good to know:
 | **Watches** | Your watches. Add, edit, pause or delete one by picking movies, cinemas, dates, days, formats and times. No JSON |
 | **Insights** | When VOX usually opens bookings (day and hour, Cairo time) and how fast each format sells out |
 | **Log** | Every change the watcher noticed, newest first |
-| **Setup** | Your token, a test alert, and whether the 5-minute timer is running |
+| **Setup** | Your token, a test alert, and whether the timer is running |
 
 Reading needs nothing. Saving watches, **Check now** and **Send a test alert** need a GitHub token, saved once in Setup:
 
@@ -341,7 +341,7 @@ To preview the web app locally with sample data, serve `web/` with `tests/web/sa
 
 ## Limits and good behavior
 
-- **Timing.** The [outside timer](#a-reliable-5-minute-timer) starts a run every 5 minutes; GitHub's own schedule is a backup that often starts 10 to 20 minutes late. Each run checks twice, 100 to 115 seconds apart, so VOX is checked about every 2 to 3 minutes. State is committed once at the end of the run.
+- **Timing.** The [outside timer](#a-reliable-timer) starts a run every 15 minutes; GitHub's own schedule is an hourly backup that often starts late. Each run checks VOX every 100 to 115 seconds for about 11 minutes, so a booking opening is noticed within about 2 minutes most of the time, and within about 8 minutes at worst (the gap between two runs). State is committed once at the end of the run.
 - **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. The watcher saves to the `state` branch, so `main` can stay quiet; `keepalive.yml` runs weekly and commits `.github/keepalive.txt` if nothing was committed to `main` in the last 30 days. The outside timer isn't affected either way.
 - **Blocking.** If VOX ever blocks GitHub's servers even for a real browser, runs fail and you get the problem alert. The fix then is to run the watcher from a home machine or another network.
 - **Load.** Each check makes 1 request for the catalog, 1 for the watch's first page, plus 1 per other watched date, with a 1.2 second pause between requests.

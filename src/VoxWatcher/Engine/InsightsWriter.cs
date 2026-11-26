@@ -47,7 +47,7 @@ public static class InsightsWriter
             var hours = topDay.Select(x => x.At.Hour).ToList();
             sb.AppendLine($"**Most common:** {topDay.Key}s, between {hours.Min():00}:00 and {hours.Max():00}:59 ({topDay.Count()} of {local.Count} openings).");
             sb.AppendLine();
-            sb.AppendLine("Note: the watcher checks about every 5 minutes, so each time is accurate to roughly 5 to 10 minutes.");
+            sb.AppendLine("Note: the watcher checks about every 2 minutes (up to about 8 between runs), so each time is accurate to a few minutes.");
             sb.AppendLine();
             sb.AppendLine("| Day | Openings |");
             sb.AppendLine("|---|---|");

@@ -16,7 +16,7 @@ const SECTIONS = [
 
 const TOKEN_KEY = "vox-watcher.token";
 const WORKFLOW = "watch.yml";
-const STALE_MINUTES = 30;
+const STALE_MINUTES = 45;
 
 const isLocal = ["localhost", "127.0.0.1"].includes(location.hostname);
 const sampleMode = isLocal && new URLSearchParams(location.search).has("sample");
@@ -338,12 +338,12 @@ function healthLines() {
   const hs = health();
   const lines = [];
   if (hs.active) lines.push(h("p", null, h("strong", null, "Checking VOX right now. "), hs.lastOk ? `The last check finished ${M.ago(hs.lastOk.updated_at)}.` : ""));
-  else if (hs.lastOk) lines.push(h("p", null, h("strong", null, `Last checked ${M.ago(hs.lastOk.updated_at)}. `), "Checks run about every 5 minutes, twice per run."));
+  else if (hs.lastOk) lines.push(h("p", null, h("strong", null, `Last checked ${M.ago(hs.lastOk.updated_at)}. `), "A run starts every 15 minutes and checks VOX about every 2 minutes."));
   else if (app.runs) lines.push(h("p", null, "The watcher hasn't finished a check yet."));
   if (hs.failures > 0) lines.push(slip({ kind: "error", text: `The last ${hs.failures === 1 ? "check" : `${hs.failures} checks`} couldn't read VOX: ${hs.lastError ?? "no details"}` }));
   if (hs.runFailed) lines.push(slip({ kind: "error", text: "The latest run failed on GitHub.", href: githubLink(hs.lastFinished.html_url), linkText: "Open the run" }));
   if (!hs.active && hs.staleMin > STALE_MINUTES && app.runs?.length) {
-    lines.push(slip({ kind: "error", text: `No successful check for ${Math.round(hs.staleMin)} minutes. The 5-minute timer may have stopped; see Setup.` }));
+    lines.push(slip({ kind: "error", text: `No successful check for ${Math.round(hs.staleMin)} minutes. The timer may have stopped; see Setup.` }));
   }
   return lines;
 }
@@ -693,7 +693,7 @@ async function runWorkflow(mode) {
   await busy(mode === "watch" ? "check" : "test", async () => {
     await client().runWorkflow(WORKFLOW, "main", { mode });
     app.notice = mode === "watch"
-      ? { kind: "ok", text: "Check started. It takes about 5 minutes; this page shows it as soon as GitHub picks it up." }
+      ? { kind: "ok", text: "Check started. The first look at VOX takes about 2 minutes; if a run is already going, yours starts when it ends." }
       : { kind: "ok", text: "Test alert on its way. Your phone should ring within a minute or two." };
     setTimeout(load, 15000);
   });
@@ -788,12 +788,12 @@ function renderSetup() {
   const recent = (app.runs ?? []).filter((r) => new Date(r.created_at) >= since);
   const byTimer = recent.filter((r) => r.event === "workflow_dispatch").length;
   const bySchedule = recent.filter((r) => r.event === "schedule").length;
-  leaves.push(leaf("The 5-minute timer", [
+  leaves.push(leaf("The timer", [
     app.runs ? h("p", null, `In the last 2 hours, ${byTimer} check${byTimer === 1 ? " was" : "s were"} started by your timer (or by hand) and ${bySchedule} by GitHub's own schedule.`) : loadErrors("runs"),
     app.runs && byTimer + bySchedule === 0
-      ? slip({ kind: "error", text: "Nothing started a check in the last 2 hours. Set up the free cron-job.org timer described in the README.", href: `${repoUrl}#a-reliable-5-minute-timer`, linkText: "How to set it up" })
+      ? slip({ kind: "error", text: "Nothing started a check in the last 2 hours. Set up the free cron-job.org timer described in the README.", href: `${repoUrl}#a-reliable-timer`, linkText: "How to set it up" })
       : null,
-    h("p", { class: "muted" }, "GitHub's built-in schedule is unreliable, so an outside timer starts the watcher every 5 minutes."),
+    h("p", { class: "muted" }, "GitHub's built-in schedule is unreliable, so an outside timer starts the watcher every 15 minutes; GitHub's schedule is an hourly backup."),
   ]));
 
   leaves.push(leaf("About", [
