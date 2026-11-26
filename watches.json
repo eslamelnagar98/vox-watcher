@@ -33,7 +33,6 @@
       "name": "Dune IMAX weekend evenings (example)",
       "enabled": true,
       "cinemas": [
-        "mall-of-egypt",
         "city-centre-almaza"
       ],
       "movies": [
