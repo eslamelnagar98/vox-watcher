@@ -739,11 +739,7 @@
       }
     },
     "dune-imax-weekend-evenings-example": {
-      "Dates": [
-        "2026-12-17",
-        "2026-12-18",
-        "2026-12-19"
-      ],
+      "Dates": [],
       "Sessions": {
         "0047-276744": {
           "Movie": "Dune: Part Three",
