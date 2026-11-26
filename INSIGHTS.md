@@ -7,6 +7,7 @@ This file is rebuilt by the watcher. Times are in Africa/Cairo.
 | Watch | Dates listed | Showtimes | Bookable now | Listed, not bookable |
 |---|---|---|---|---|
 | Doomsday at Almaza | none | 72 | 13 | 59 |
+| Dune IMAX weekend evenings (example) | 17 Dec, 18 Dec, 19 Dec | 6 | 6 | 0 |
 
 ## When does VOX open bookings?
 
