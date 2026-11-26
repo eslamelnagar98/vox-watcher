@@ -120,7 +120,7 @@ Within 5 minutes, **Actions** shows a run started by `workflow_dispatch`, and th
 
 Good to know:
 
-- Each run takes about 5 minutes and checks VOX 3 times. A trigger that arrives during a run waits for it; GitHub cancels extra waiting runs, so a few grey "cancelled" runs are normal.
+- Each run takes about 4 minutes and checks VOX twice, so it ends before the timer's next trigger. When an extra trigger comes in (you press **Check now**, save a watch, or press **Test run**), it waits for the current run; if yet another arrives while it waits, GitHub cancels the waiting one, since the newer run does the same job. Those grey "cancelled" runs lose nothing.
 - When the token expires, the timer gets `401` and cron-job.org emails you. Make a new token and paste it into the job.
 
 ## The web app
@@ -341,7 +341,7 @@ To preview the web app locally with sample data, serve `web/` with `tests/web/sa
 
 ## Limits and good behavior
 
-- **Timing.** The [outside timer](#a-reliable-5-minute-timer) starts a run every 5 minutes; GitHub's own schedule is a backup that often starts 10 to 20 minutes late. Each run checks about 3 times, every 100 to 115 seconds, over 4 minutes, so VOX is checked about every 2 minutes. State is committed once at the end of the run.
+- **Timing.** The [outside timer](#a-reliable-5-minute-timer) starts a run every 5 minutes; GitHub's own schedule is a backup that often starts 10 to 20 minutes late. Each run checks twice, 100 to 115 seconds apart, so VOX is checked about every 2 to 3 minutes. State is committed once at the end of the run.
 - **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. The watcher saves to the `state` branch, so `main` can stay quiet; `keepalive.yml` runs weekly and commits `.github/keepalive.txt` if nothing was committed to `main` in the last 30 days. The outside timer isn't affected either way.
 - **Blocking.** If VOX ever blocks GitHub's servers even for a real browser, runs fail and you get the problem alert. The fix then is to run the watcher from a home machine or another network.
 - **Load.** Each check makes 1 request for the catalog, 1 for the watch's first page, plus 1 per other watched date, with a 1.2 second pause between requests.

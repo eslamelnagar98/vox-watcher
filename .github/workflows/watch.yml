@@ -71,8 +71,9 @@ jobs:
         run: |
           MODE="${{ inputs.mode || 'watch' }}"
           if [ "$MODE" = "watch" ]; then
-            # Check about 3 times per job (every 100 to 115 s), because the schedule itself is unreliable.
-            dotnet run --project src/VoxWatcher -c Release --no-build -- watch --loop-seconds 240 --interval-seconds 100
+            # Check twice per run (100 to 115 s apart). The run ends in about 4 minutes,
+            # before the 5-minute timer starts the next one, so runs don't pile up.
+            dotnet run --project src/VoxWatcher -c Release --no-build -- watch --loop-seconds 150 --interval-seconds 100
           else
             dotnet run --project src/VoxWatcher -c Release --no-build -- "$MODE"
           fi
