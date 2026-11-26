@@ -4,3 +4,6 @@ obj/
 .vs/
 .idea/
 __pycache__/
+
+# The watcher's memory lives on the 'state' branch; local runs write here.
+/state/

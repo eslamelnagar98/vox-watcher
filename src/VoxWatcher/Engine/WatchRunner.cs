@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Text.Json;
 using VoxWatcher.Configuration;
 using VoxWatcher.Domain;
 using VoxWatcher.Notifications;
@@ -59,7 +60,20 @@ public sealed class WatchRunner(
         Console.WriteLine();
         Console.WriteLine("MOVIES (use in \"movies\")");
         foreach (var m in page.Movies.OrderBy(m => m.Name)) Console.WriteLine($"  {m.Slug,-45} {m.Name}");
-        store.WriteText("CATALOG.md", InsightsWriter.BuildCatalog(page.Cinemas, page.Movies, config.Site));
+        WriteCatalog(page.Cinemas, page.Movies);
+    }
+
+    /// <summary>CATALOG.md for people, catalog.json for the web app's cinema and movie pickers.</summary>
+    private void WriteCatalog(IReadOnlyList<CatalogItem> cinemas, IReadOnlyList<CatalogItem> movies)
+    {
+        store.WriteText("CATALOG.md", InsightsWriter.BuildCatalog(cinemas, movies, config.Site));
+        var catalog = new
+        {
+            config.Site,
+            Cinemas = cinemas.OrderBy(c => c.Name, StringComparer.OrdinalIgnoreCase),
+            Movies = movies.OrderBy(m => m.Name, StringComparer.OrdinalIgnoreCase),
+        };
+        store.WriteText("catalog.json", JsonSerializer.Serialize(catalog, WatchConfig.JsonOptions));
     }
 
     private async Task RefreshCatalogAsync(WatcherState state, List<WatchDefinition> watches, List<string> log, CancellationToken ct)
@@ -70,7 +84,7 @@ public sealed class WatchRunner(
 
         _cinemas = [.. page.Cinemas];
         _movies = [.. page.Movies];
-        store.WriteText("CATALOG.md", InsightsWriter.BuildCatalog(_cinemas, _movies, config.Site));
+        WriteCatalog(_cinemas, _movies);
 
         var firstTime = state.KnownMovies.Count == 0;
         var newMovies = _movies.Where(m => !state.KnownMovies.Contains(m.Slug)).ToList();

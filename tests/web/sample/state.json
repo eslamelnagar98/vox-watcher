@@ -769,6 +769,44 @@
   },
   "Openings": [
     {
+      "At": "2026-11-05T09:12:00+00:00",
+      "Watch": "Doomsday at Almaza",
+      "Movie": "Avengers: Doomsday",
+      "Sessions": 8,
+      "Dates": [
+        "2026-12-16",
+        "2026-12-17"
+      ]
+    },
+    {
+      "At": "2026-11-12T09:41:00+00:00",
+      "Watch": "Doomsday at Almaza",
+      "Movie": "Avengers: Doomsday",
+      "Sessions": 4,
+      "Dates": [
+        "2026-12-18"
+      ]
+    },
+    {
+      "At": "2026-11-19T10:05:00+00:00",
+      "Watch": "Doomsday at Almaza",
+      "Movie": "Avengers: Doomsday",
+      "Sessions": 6,
+      "Dates": [
+        "2026-12-19",
+        "2026-12-20"
+      ]
+    },
+    {
+      "At": "2026-11-22T17:30:00+00:00",
+      "Watch": "Doomsday at Almaza",
+      "Movie": "Avengers: Doomsday",
+      "Sessions": 2,
+      "Dates": [
+        "2026-12-21"
+      ]
+    },
+    {
       "At": "2026-11-26T13:50:25.8469235+00:00",
       "Watch": "Doomsday at Almaza",
       "Movie": "Avengers: Doomsday",
@@ -779,5 +817,27 @@
       ]
     }
   ],
-  "SellOuts": []
+  "SellOuts": [
+    {
+      "Movie": "Avengers: Doomsday",
+      "Cinema": "City Centre Almaza",
+      "Experience": "GOLD",
+      "Date": "2026-12-16",
+      "MinutesBookable": 38
+    },
+    {
+      "Movie": "Avengers: Doomsday",
+      "Cinema": "City Centre Almaza",
+      "Experience": "GOLD",
+      "Date": "2026-12-17",
+      "MinutesBookable": 52
+    },
+    {
+      "Movie": "Avengers: Doomsday",
+      "Cinema": "City Centre Almaza",
+      "Experience": "Standard",
+      "Date": "2026-12-16",
+      "MinutesBookable": 410
+    }
+  ]
 }

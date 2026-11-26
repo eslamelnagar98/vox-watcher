@@ -1,0 +1,61 @@
+{
+  "note": "Synthetic check history for the local preview; minutes_ago is relative to page load.",
+  "workflow_runs": [
+    {
+      "id": 9,
+      "minutes_ago": 1,
+      "event": "workflow_dispatch",
+      "status": "in_progress",
+      "conclusion": null,
+      "html_url": "https://github.com/eslamelnagar98/vox-watcher/actions/runs/9"
+    },
+    {
+      "id": 8,
+      "minutes_ago": 4,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/eslamelnagar98/vox-watcher/actions/runs/8"
+    },
+    {
+      "id": 7,
+      "minutes_ago": 9,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/eslamelnagar98/vox-watcher/actions/runs/7"
+    },
+    {
+      "id": 6,
+      "minutes_ago": 14,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/eslamelnagar98/vox-watcher/actions/runs/6"
+    },
+    {
+      "id": 5,
+      "minutes_ago": 19,
+      "event": "schedule",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/eslamelnagar98/vox-watcher/actions/runs/5"
+    },
+    {
+      "id": 4,
+      "minutes_ago": 24,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/eslamelnagar98/vox-watcher/actions/runs/4"
+    },
+    {
+      "id": 3,
+      "minutes_ago": 29,
+      "event": "workflow_dispatch",
+      "status": "completed",
+      "conclusion": "success",
+      "html_url": "https://github.com/eslamelnagar98/vox-watcher/actions/runs/3"
+    }
+  ]
+}
