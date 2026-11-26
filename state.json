@@ -641,11 +641,10 @@
           "Experience": "Standard",
           "Date": "2026-12-20",
           "Time": "23:00:00",
-          "Bookable": false,
+          "Bookable": true,
           "EverBookable": true,
           "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
-          "OpenedAt": "2026-11-26T13:36:35.7870605+00:00",
-          "SoldOutAt": "2026-11-26T20:25:27.4074477+00:00"
+          "OpenedAt": "2026-11-26T13:36:35.7870605+00:00"
         },
         "0047-277001": {
           "Movie": "Avengers: Doomsday",
