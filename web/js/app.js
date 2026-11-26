@@ -16,7 +16,7 @@ const SECTIONS = [
 
 const TOKEN_KEY = "vox-watcher.token";
 const WORKFLOW = "watch.yml";
-const STALE_MINUTES = 45;
+const STALE_MINUTES = 30;
 
 const isLocal = ["localhost", "127.0.0.1"].includes(location.hostname);
 const sampleMode = isLocal && new URLSearchParams(location.search).has("sample");
@@ -338,7 +338,7 @@ function healthLines() {
   const hs = health();
   const lines = [];
   if (hs.active) lines.push(h("p", null, h("strong", null, "Checking VOX right now. "), hs.lastOk ? `The last check finished ${M.ago(hs.lastOk.updated_at)}.` : ""));
-  else if (hs.lastOk) lines.push(h("p", null, h("strong", null, `Last checked ${M.ago(hs.lastOk.updated_at)}. `), "A run starts every 15 minutes and checks VOX about every 2 minutes."));
+  else if (hs.lastOk) lines.push(h("p", null, h("strong", null, `Last checked ${M.ago(hs.lastOk.updated_at)}. `), "A short run starts every 5 minutes and checks VOX twice."));
   else if (app.runs) lines.push(h("p", null, "The watcher hasn't finished a check yet."));
   if (hs.failures > 0) lines.push(slip({ kind: "error", text: `The last ${hs.failures === 1 ? "check" : `${hs.failures} checks`} couldn't read VOX: ${hs.lastError ?? "no details"}` }));
   if (hs.runFailed) lines.push(slip({ kind: "error", text: "The latest run failed on GitHub.", href: githubLink(hs.lastFinished.html_url), linkText: "Open the run" }));
@@ -693,7 +693,7 @@ async function runWorkflow(mode) {
   await busy(mode === "watch" ? "check" : "test", async () => {
     await client().runWorkflow(WORKFLOW, "main", { mode });
     app.notice = mode === "watch"
-      ? { kind: "ok", text: "Check started. The first look at VOX takes about 2 minutes; if a run is already going, yours starts when it ends." }
+      ? { kind: "ok", text: "Check started. Results in about 3 minutes; if a run is already going, yours starts right after it." }
       : { kind: "ok", text: "Test alert on its way. Your phone should ring within a minute or two." };
     setTimeout(load, 15000);
   });
@@ -793,7 +793,7 @@ function renderSetup() {
     app.runs && byTimer + bySchedule === 0
       ? slip({ kind: "error", text: "Nothing started a check in the last 2 hours. Set up the free cron-job.org timer described in the README.", href: `${repoUrl}#a-reliable-timer`, linkText: "How to set it up" })
       : null,
-    h("p", { class: "muted" }, "GitHub's built-in schedule is unreliable, so an outside timer starts the watcher every 15 minutes; GitHub's schedule is an hourly backup."),
+    h("p", { class: "muted" }, "GitHub's built-in schedule is unreliable, so an outside timer starts the watcher every 5 minutes; GitHub's schedule is an hourly backup."),
   ]));
 
   leaves.push(leaf("About", [
