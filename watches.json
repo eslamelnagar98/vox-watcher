@@ -47,7 +47,7 @@
         "IMAX"
       ],
       "time": {
-        "after": "18:00"
+        "after": "15:00"
       },
       "alerts": {
         "bookingOpened": true,
