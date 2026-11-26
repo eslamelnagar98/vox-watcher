@@ -130,7 +130,7 @@ finally
     if (source is IAsyncDisposable disposable) await disposable.DisposeAsync();
 }
 
-// Repeats the whole check inside one job, because GitHub often starts */5 schedules 10 to 20 minutes late.
+// Repeats the whole check inside one job: a run starts every 15 minutes and keeps checking until shortly before the next.
 // Each pass is a new WatchRunner with a fresh "now". The browser (if any) is shared across passes.
 async Task RunWatchLoopAsync()
 {

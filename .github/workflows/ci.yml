@@ -1,7 +1,7 @@
 name: CI
 
 # Builds and tests on every pull request and on code changes to main.
-# Kept separate from watch.yml so tests never slow down or block the 5-minute checks.
+# Kept separate from watch.yml so tests never slow down or block the watcher's checks.
 
 on:
   pull_request:

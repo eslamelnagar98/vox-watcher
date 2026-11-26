@@ -20,7 +20,7 @@ It watches the real booking signal: on the VOX site a showtime is either a cross
 
 ## Operating Context
 
-- Runs on GitHub Actions, triggered every 5 minutes, about 3 checks per run, through a real Google Chrome (VOX is behind Akamai bot protection).
+- Runs on GitHub Actions: an outside timer (cron-job.org) starts a run every 15 minutes and each run checks VOX about every 2 minutes for 11 minutes (GitHub's own schedule is an hourly backup), through a real Google Chrome (VOX is behind Akamai bot protection).
 - Configuration lives in `watches.json` on the `main` branch; the watcher's memory (`state.json`, `events.log`, `INSIGHTS.md`, `CATALOG.md`, `catalog.json`) lives on a separate `state` branch.
 - Alerts: ntfy push with a button that opens the exact VOX booking page.
 - Times are Africa/Cairo. Dates on VOX have no year; VOX lists after-midnight shows under the previous day.
