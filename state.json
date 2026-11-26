@@ -718,10 +718,11 @@
           "Experience": "Standard",
           "Date": "2026-12-23",
           "Time": "15:30:00",
-          "Bookable": true,
+          "Bookable": false,
           "EverBookable": true,
           "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
-          "OpenedAt": "2026-11-26T13:36:35.7870605+00:00"
+          "OpenedAt": "2026-11-26T13:36:35.7870605+00:00",
+          "SoldOutAt": "2026-11-26T18:51:00.832605+00:00"
         },
         "0047-277010": {
           "Movie": "Avengers: Doomsday",
@@ -829,6 +830,17 @@
         "2026-12-23"
       ],
       "Sessions": {
+        "0047-276743": {
+          "Movie": "Dune: Part Three",
+          "Cinema": "City Centre Almaza",
+          "Experience": "IMAX",
+          "Date": "2026-12-17",
+          "Time": "16:00:00",
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T18:48:37.0619245+00:00",
+          "OpenedAt": "2026-11-26T18:48:37.0619245+00:00"
+        },
         "0047-276744": {
           "Movie": "Dune: Part Three",
           "Cinema": "City Centre Almaza",
@@ -850,6 +862,17 @@
           "EverBookable": true,
           "FirstSeen": "2026-11-26T18:29:58.67078+00:00",
           "OpenedAt": "2026-11-26T18:29:58.67078+00:00"
+        },
+        "0047-276747": {
+          "Movie": "Dune: Part Three",
+          "Cinema": "City Centre Almaza",
+          "Experience": "IMAX",
+          "Date": "2026-12-18",
+          "Time": "16:00:00",
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T18:48:37.0619245+00:00",
+          "OpenedAt": "2026-11-26T18:48:37.0619245+00:00"
         },
         "0047-276748": {
           "Movie": "Dune: Part Three",
@@ -873,6 +896,17 @@
           "FirstSeen": "2026-11-26T18:29:58.67078+00:00",
           "OpenedAt": "2026-11-26T18:29:58.67078+00:00"
         },
+        "0047-276751": {
+          "Movie": "Dune: Part Three",
+          "Cinema": "City Centre Almaza",
+          "Experience": "IMAX",
+          "Date": "2026-12-19",
+          "Time": "16:00:00",
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T18:48:37.0619245+00:00",
+          "OpenedAt": "2026-11-26T18:48:37.0619245+00:00"
+        },
         "0047-276752": {
           "Movie": "Dune: Part Three",
           "Cinema": "City Centre Almaza",
@@ -894,6 +928,17 @@
           "EverBookable": true,
           "FirstSeen": "2026-11-26T18:29:58.67078+00:00",
           "OpenedAt": "2026-11-26T18:29:58.67078+00:00"
+        },
+        "0047-276755": {
+          "Movie": "Dune: Part Three",
+          "Cinema": "City Centre Almaza",
+          "Experience": "IMAX",
+          "Date": "2026-12-20",
+          "Time": "16:00:00",
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T18:48:37.0619245+00:00",
+          "OpenedAt": "2026-11-26T18:48:37.0619245+00:00"
         },
         "0047-276756": {
           "Movie": "Dune: Part Three",
@@ -917,6 +962,17 @@
           "FirstSeen": "2026-11-26T18:29:58.67078+00:00",
           "OpenedAt": "2026-11-26T18:29:58.67078+00:00"
         },
+        "0047-276759": {
+          "Movie": "Dune: Part Three",
+          "Cinema": "City Centre Almaza",
+          "Experience": "IMAX",
+          "Date": "2026-12-21",
+          "Time": "16:00:00",
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T18:48:37.0619245+00:00",
+          "OpenedAt": "2026-11-26T18:48:37.0619245+00:00"
+        },
         "0047-276760": {
           "Movie": "Dune: Part Three",
           "Cinema": "City Centre Almaza",
@@ -939,6 +995,17 @@
           "FirstSeen": "2026-11-26T18:29:58.67078+00:00",
           "OpenedAt": "2026-11-26T18:29:58.67078+00:00"
         },
+        "0047-276763": {
+          "Movie": "Dune: Part Three",
+          "Cinema": "City Centre Almaza",
+          "Experience": "IMAX",
+          "Date": "2026-12-22",
+          "Time": "16:00:00",
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T18:48:37.0619245+00:00",
+          "OpenedAt": "2026-11-26T18:48:37.0619245+00:00"
+        },
         "0047-276764": {
           "Movie": "Dune: Part Three",
           "Cinema": "City Centre Almaza",
@@ -960,6 +1027,17 @@
           "EverBookable": true,
           "FirstSeen": "2026-11-26T18:29:58.67078+00:00",
           "OpenedAt": "2026-11-26T18:29:58.67078+00:00"
+        },
+        "0047-276767": {
+          "Movie": "Dune: Part Three",
+          "Cinema": "City Centre Almaza",
+          "Experience": "IMAX",
+          "Date": "2026-12-23",
+          "Time": "16:00:00",
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T18:48:37.0619245+00:00",
+          "OpenedAt": "2026-11-26T18:48:37.0619245+00:00"
         },
         "0047-276768": {
           "Movie": "Dune: Part Three",
@@ -1039,6 +1117,21 @@
         "2026-12-22",
         "2026-12-23"
       ]
+    },
+    {
+      "At": "2026-11-26T18:48:37.0619245+00:00",
+      "Watch": "Dune IMAX weekend evenings",
+      "Movie": "Dune: Part Three",
+      "Sessions": 7,
+      "Dates": [
+        "2026-12-17",
+        "2026-12-18",
+        "2026-12-19",
+        "2026-12-20",
+        "2026-12-21",
+        "2026-12-22",
+        "2026-12-23"
+      ]
     }
   ],
   "SellOuts": [
@@ -1048,6 +1141,13 @@
       "Experience": "Standard",
       "Date": "2026-12-19",
       "MinutesBookable": 279.5
+    },
+    {
+      "Movie": "Avengers: Doomsday",
+      "Cinema": "City Centre Almaza",
+      "Experience": "Standard",
+      "Date": "2026-12-23",
+      "MinutesBookable": 314.4
     }
   ]
 }
