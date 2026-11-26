@@ -222,11 +222,35 @@ NTFY_TOPIC=your-topic dotnet run --project src/VoxWatcher -- test-notify
 
 Options: `--dry-run`, `--config <file>`, `--state <dir>`, `--fixtures <dir>` (offline HTML), `--now <ISO time>`.
 
-Environment variables: `NTFY_TOPIC` (required to send), `NTFY_SERVER` (default `https://ntfy.sh`, for a self-hosted server), `NTFY_TOKEN` (for a protected topic). In GitHub, add `NTFY_TOKEN` as a secret and `NTFY_SERVER` as a variable if you need them.
+Options for repeating inside one process: `--loop-seconds <n>` (keep checking for about n seconds) and `--interval-seconds <n>` (gap between checks, plus up to 15 s of jitter).
+
+Environment variables:
+
+| Variable | Meaning |
+|---|---|
+| `NTFY_TOPIC` | Required to send pushes |
+| `NTFY_SERVER` | Default `https://ntfy.sh`. Set it for a self-hosted server |
+| `NTFY_TOKEN` | For a protected topic |
+| `VOX_FETCHER` | `http`, `browser` or `auto` (default). `auto` tries plain HTTP with a 10 s timeout, then switches to the browser for the rest of the run |
+| `VOX_BROWSER_CHANNEL` | Browser used by `browser` mode. Default `chrome` (the installed Google Chrome). Also `msedge` or `chromium` |
+
+In GitHub, add `NTFY_TOKEN` as a secret and `NTFY_SERVER` as a variable if you need them.
+
+### Why a real browser
+
+VOX is served through Akamai. Tests from a GitHub runner (AWS, ubuntu-24.04) showed:
+
+| Client | Result |
+|---|---|
+| curl, .NET HttpClient | Timeout, no bytes |
+| Playwright's bundled Chromium (headless shell) | `ERR_HTTP2_PROTOCOL_ERROR` |
+| Installed Google Chrome, headless, normal user agent | 200, full page |
+
+So the workflow runs with `VOX_FETCHER=browser` and `VOX_BROWSER_CHANNEL=chrome`. Google Chrome is preinstalled on the `ubuntu-24.04` runner image, which is why the workflow pins that image instead of `ubuntu-latest`.
 
 ## Testing
 
-`tests/run_scenarios.py` runs the watcher end to end against real HTML captured from egy.voxcinemas.com and simulates a full story: baseline, booking opens, a new date appears, the session sells out, seats come back, the site breaks 3 times, and the site recovers. It checks the exact messages.
+`tests/run_scenarios.py` runs the watcher end to end against real HTML captured from egy.voxcinemas.com and simulates a full story: baseline, booking opens, a new date appears, the session sells out, seats come back, the site breaks 3 times, and the site recovers. It also covers a single broken date page (no alert, nothing lost) and a show that already started (not counted as sold out). It checks the exact messages.
 
 ```bash
 python3 tests/run_scenarios.py
@@ -236,10 +260,11 @@ python3 tests/run_scenarios.py
 
 ## Limits and good behavior
 
-- **Timing.** The schedule is every 5 minutes, but GitHub often starts scheduled runs a few minutes late, especially at the top of the hour. Expect alerts within about 5 to 15 minutes. For 1-minute checks, run the same code as an Azure Function with a Timer Trigger.
-- **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. The bot's state commits count as activity, but if nothing changes for 2 months, open the Actions tab and re-enable it.
-- **Blocking.** If VOX ever blocks GitHub's servers, runs fail with a 403 and you get the problem alert. The fix is to run the watcher from a home machine or a phone network instead.
-- **Load.** Each run makes about 1 request for the catalog, plus 1 per watched date, with a 1.2 second pause between requests.
+- **Timing.** The schedule is every 5 minutes, but GitHub often starts scheduled runs 10 to 20 minutes late. To cover the gaps, each job checks about 4 times, every 60 to 75 seconds, over 4 minutes. State is committed once at the end of the job.
+- **Inactive repos.** GitHub disables scheduled workflows after 60 days with no repository activity. `keepalive.yml` runs weekly and commits `state/keepalive.txt` if nothing was committed in the last 30 days.
+- **Blocking.** If VOX ever blocks GitHub's servers even for a real browser, runs fail and you get the problem alert. The fix then is to run the watcher from a home machine or another network.
+- **Load.** Each check makes about 1 request for the catalog, plus 1 per watched date, with a 1.2 second pause between requests.
+- **Sold out vs started.** When a show's start time passes, VOX makes it unavailable. That is not counted as a sell-out.
 - **No automatic booking.** The watcher only watches. Booking stays with you, which also keeps your VOX account safe.
 
 ## Troubleshooting
@@ -258,11 +283,13 @@ python3 tests/run_scenarios.py
 ```
 watches.json                     what to watch (you edit this)
 .github/workflows/watch.yml      schedule, build, run, save state
+.github/workflows/keepalive.yml  keeps the schedule from being disabled
 src/VoxWatcher/
   Program.cs                     entry point and modes
   Configuration/WatchConfig.cs   config model, validation, filters
   Vox/ShowtimesParser.cs         reads the VOX showtimes HTML
-  Vox/HtmlSources.cs             HTTP with retries and pacing, offline fixtures
+  Vox/HtmlSources.cs             HTTP with retries and pacing, auto mode, offline fixtures
+  Vox/PlaywrightHtmlSource.cs    real browser fetcher (Google Chrome through Playwright)
   Engine/WatchRunner.cs          one run: fetch, filter, detect, notify, save
   Engine/ChangeDetector.cs       compares now vs last time
   Engine/InsightsWriter.cs       INSIGHTS.md and CATALOG.md

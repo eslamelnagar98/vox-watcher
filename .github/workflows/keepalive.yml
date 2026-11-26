@@ -1,0 +1,38 @@
+name: keep-alive
+
+# GitHub disables scheduled workflows in public repos after 60 days without repository activity.
+# Once a week, if nothing was committed in the last 30 days, commit a tiny file so the schedule stays on.
+
+on:
+  schedule:
+    - cron: "23 7 * * 1"         # Mondays 07:23 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: keep-alive
+  cancel-in-progress: false
+
+jobs:
+  keepalive:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Commit if the repo has been quiet for 30 days
+        run: |
+          last=$(git log -1 --format=%ct)
+          now=$(date +%s)
+          days=$(( (now - last) / 86400 ))
+          echo "Last commit was $days day(s) ago."
+          if [ "$days" -lt 30 ]; then echo "Recent activity. Nothing to do."; exit 0; fi
+          mkdir -p state
+          date -u '+%Y-%m-%d %H:%M UTC' > state/keepalive.txt
+          git config user.name "vox-bot"
+          git config user.email "vox-bot@users.noreply.github.com"
+          git add state/keepalive.txt
+          git commit -m "keep-alive: $(date -u '+%Y-%m-%d')"
+          git push

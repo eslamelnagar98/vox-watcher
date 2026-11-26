@@ -15,10 +15,11 @@ public static class ChangeDetector
         IReadOnlyCollection<DateOnly> fetchedDates,
         IReadOnlyList<Showtime> showtimesNow,
         DateTimeOffset now,
-        DateOnly today,
+        DateTime nowLocal,
         List<SellOutRecord> sellOuts)
     {
         var changes = new List<Change>();
+        var today = DateOnly.FromDateTime(nowLocal);
 
         foreach (var date in datesNow.Where(d => !state.Dates.Contains(d)).Order())
             changes.Add(new Change(ChangeKind.DateAdded, date));
@@ -54,6 +55,11 @@ public static class ChangeDetector
                 prev.EverBookable = true;
                 prev.SoldOutAt = null;
             }
+            else if (prev.Bookable && !s.Bookable && HasStarted(s, nowLocal))
+            {
+                // The show already started, so VOX closed sales. That is not a sell-out.
+                prev.SoldOutAt = null;
+            }
             else if (prev.Bookable && !s.Bookable)
             {
                 changes.Add(new Change(ChangeKind.SoldOut, s.Date, s));
@@ -78,4 +84,7 @@ public static class ChangeDetector
         state.Dates = new SortedSet<DateOnly>(datesNow.Where(d => d >= today));
         return changes;
     }
+
+    /// <summary>Start time (local, e.g. Cairo) is at or before now.</summary>
+    private static bool HasStarted(Showtime s, DateTime nowLocal) => s.Date.ToDateTime(s.Time) <= nowLocal;
 }
