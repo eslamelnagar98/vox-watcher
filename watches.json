@@ -12,10 +12,10 @@
       "enabled": true,
       "cinemas": ["city-centre-almaza"],
       "movies": ["avengers-doomsday"],
-      "dates": { "from": "2026-12-16", "to": "2027-01-15" },
+      "dates": { "from": "2026-12-24", "to": "2027-01-15" },
       "daysOfWeek": [],
       "experiences": [],
-      "time": { "after": "23:00" },
+      "time": { "after": "12:00", "before": "23:59" },
       "alerts": { "bookingOpened": true, "seatsReturned": true, "newShowtimes": true, "soldOut": false }
     },
     {
