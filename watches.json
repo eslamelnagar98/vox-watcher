@@ -55,6 +55,25 @@
         "newShowtimes": true,
         "soldOut": false
       }
+    },
+    {
+      "name": "Hadota",
+      "enabled": true,
+      "cinemas": [],
+      "movies": [
+        "hadoota-arabic"
+      ],
+      "dates": {
+        "from": "2026-11-26"
+      },
+      "daysOfWeek": [],
+      "experiences": [],
+      "alerts": {
+        "bookingOpened": true,
+        "seatsReturned": true,
+        "newShowtimes": true,
+        "soldOut": false
+      }
     }
   ]
 }
