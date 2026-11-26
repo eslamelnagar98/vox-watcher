@@ -93,14 +93,24 @@ test("times and dates read like VOX", () => {
   assert.equal(M.formatDate("2026-12-18"), "Fri 18 Dec");
 });
 
-test("every section's acetate keeps text at least 7:1, light and dark", () => {
-  const ink = M.hexToRgb("#161412"), paper = M.hexToRgb("#f7f2e6"), smoke = M.hexToRgb("#141210"), ivory = M.hexToRgb("#efe9dc");
-  for (const hue of ["#f3c01f", "#e8672a", "#5b9b3a", "#139e97", "#2853b3", "#7650bf"]) {
-    const board = M.hexToRgb(hue);
-    const light = M.composite(paper, M.solveLeafAlpha(paper, board, 0.8), board);
-    assert.ok(M.contrast(light, ink) >= 7, `light ${hue}`);
-    const darkBoard = M.mix(board, smoke, 0.42);
-    const dark = M.composite(smoke, M.solveLeafAlpha(smoke, darkBoard, 0.02, true), darkBoard);
-    assert.ok(M.contrast(dark, ivory) >= 7, `dark ${hue}`);
+test("every section's colours read: acetate text 7:1, board text and buttons 4.5:1, light and dark", () => {
+  for (const hex of ["#f3c01f", "#e8672a", "#5b9b3a", "#139e97", "#2853b3", "#7650bf"]) {
+    for (const dark of [false, true]) {
+      const p = M.palette(hex, dark);
+      assert.ok(M.contrast(p.leafSolid, p.text) >= 7, `leaf ${hex} dark=${dark}`);
+      assert.ok(M.contrast(p.board, p.onBoard) >= 4.5, `board ${hex} dark=${dark}: ${M.contrast(p.board, p.onBoard).toFixed(2)}`);
+      assert.ok(M.contrast(p.hue, p.onHue) >= 4.5, `button ${hex}`);
+    }
+  }
+});
+
+test("dark boards keep their colour instead of going muddy", () => {
+  for (const hex of ["#f3c01f", "#e8672a", "#5b9b3a", "#139e97", "#2853b3", "#7650bf"]) {
+    const hue = M.hexToRgb(hex);
+    const [, chroma, angle] = M.rgbToOklch(M.darkBoard(hue));
+    const [, mixedChroma] = M.rgbToOklch(M.mix(hue, M.SMOKE, 0.42));
+    const [, , originalAngle] = M.rgbToOklch(hue);
+    assert.ok(chroma >= mixedChroma && chroma >= 0.075, `${hex} chroma ${chroma.toFixed(3)} vs plain mix ${mixedChroma.toFixed(3)}`);
+    assert.ok(Math.abs(angle - originalAngle) < 0.05, `${hex} hue drifted`);
   }
 });

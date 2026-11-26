@@ -24,6 +24,11 @@
   --rule: color-mix(in srgb, var(--text) 26%, transparent);
   --shadow: color-mix(in srgb, var(--ink) 30%, transparent);
   --hatch: color-mix(in srgb, var(--text) 18%, transparent);
+  --hatch-faint: color-mix(in srgb, var(--text) 11%, transparent);
+  --edge: rgb(255 255 255 / 0.7);
+  --sheen: rgb(255 255 255 / 0.24);
+  --bind-tint: color-mix(in srgb, var(--text) 6%, transparent);
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 
   --size: 17px;
   --lead: 26px;
@@ -37,7 +42,7 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  :root { --shadow: rgb(0 0 0 / 0.55); }
+  :root { --shadow: rgb(0 0 0 / 0.55); --edge: rgb(255 255 255 / 0.1); --sheen: rgb(255 255 255 / 0.05); }
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -51,7 +56,7 @@ html {
 body {
   margin: 0;
   min-height: 100dvh;
-  background: var(--board);
+  background: var(--grain), var(--board);
   color: var(--text);
   font: 400 var(--size) / var(--lead) var(--serif);
   font-variant-numeric: lining-nums;
@@ -121,7 +126,11 @@ a { color: inherit; text-decoration-thickness: 1.5px; text-underline-offset: 3px
 
 .freshness.is-ok .dot { background: currentColor; }
 .freshness.is-bad .dot { background: var(--vermilion); border-color: var(--vermilion); }
-.freshness.is-busy .dot { animation: blink 1.2s steps(2, jump-none) infinite; }
+.freshness.is-busy .dot { background: currentColor; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .freshness.is-busy .dot { background: transparent; animation: blink 1.2s steps(2, jump-none) infinite; }
+}
 
 @keyframes blink { to { background: currentColor; } }
 
@@ -161,7 +170,7 @@ a { color: inherit; text-decoration-thickness: 1.5px; text-underline-offset: 3px
   flex: var(--grow, 1) 1 0;
   min-height: 62px;
   max-height: 210px;
-  margin: 0 0 3px 7px;
+  margin: 0 0 3px 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -181,11 +190,13 @@ a { color: inherit; text-decoration-thickness: 1.5px; text-underline-offset: 3px
   white-space: nowrap;
 }
 
+/* The open division's tab sticks out the furthest and is cut from the board itself. */
 .tab[aria-current="page"] {
   margin-left: 0;
   background: var(--board);
   color: var(--on-board);
-  box-shadow: none;
+  border: 1.5px solid var(--on-board);
+  border-left: 0;
   z-index: 1;
 }
 
@@ -223,31 +234,37 @@ main:focus-visible { outline: none; }
 }
 
 .leaf {
+  --bind: 30px;
+  --pad-l: calc(var(--bind) + 12px);
   position: relative;
   min-width: 0;
-  padding: 16px 16px 18px 42px;
-  background: var(--leaf);
+  padding: 16px 16px 18px var(--pad-l);
+  /* A tinted strip and a hairline mark the binding margin the holes are punched in; a faint sheen says acetate. */
+  background:
+    linear-gradient(115deg, var(--sheen) 0%, transparent 45%),
+    linear-gradient(to right, var(--bind-tint) 0 calc(var(--bind) - 1px), var(--rule) calc(var(--bind) - 1px) var(--bind), transparent var(--bind)),
+    var(--leaf);
   color: var(--text);
   border-radius: 3px 10px 10px 3px;
-  box-shadow: 3px 3px 0 var(--shadow);
+  box-shadow: 3px 3px 0 var(--shadow), inset 1.5px 1.5px 0 var(--edge);
   transform-origin: 0 50%;
 }
 
-/* The punch holes show the board straight through the sheet. */
+/* The punch holes show the board straight through the sheet, rimmed where the die cut it. */
 .leaf::before,
 .leaf::after {
   content: "";
   position: absolute;
-  left: 13px;
-  width: 13px;
-  height: 13px;
+  left: calc((var(--bind) - 16px) / 2);
+  width: 16px;
+  height: 16px;
   border-radius: 50%;
   background: var(--board);
-  box-shadow: inset 1px 1.5px 2px rgb(0 0 0 / 0.5);
+  box-shadow: inset 0 0 0 1.5px rgb(0 0 0 / 0.32), inset 1px 2px 2px rgb(0 0 0 / 0.45);
 }
 
-.leaf::before { top: 19px; }
-.leaf::after { bottom: 19px; }
+.leaf::before { top: clamp(14px, 18%, 140px); }
+.leaf::after { bottom: clamp(14px, 18%, 140px); }
 
 .leaf-title {
   margin: 0 0 10px;
@@ -366,8 +383,7 @@ main:focus-visible { outline: none; }
 
 .chip:has(input:checked) { border-color: var(--text); }
 
-.chip:has(input:checked) .hole,
-.onoff.is-on .hole {
+.chip:has(input:checked) .hole {
   border: 0;
   background: var(--board);
   box-shadow: inset 1px 1.5px 2px rgb(0 0 0 / 0.55);
@@ -375,19 +391,41 @@ main:focus-visible { outline: none; }
 
 .chip:has(input:focus-visible) { outline: 3px solid var(--text); outline-offset: 2px; }
 
+/* A watch's state is a tag, so it never sits beside a punch hole looking like one. */
 .onoff {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font: 720 var(--size) / 1 var(--head);
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 2px;
+  font: 720 var(--size) / 1.2 var(--head);
   font-stretch: 76%;
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
 
+.onoff.is-on { background: var(--hue); color: var(--on-hue); }
+
+.onoff.is-off {
+  background: repeating-linear-gradient(135deg, var(--hatch-faint) 0 1px, transparent 1px 7px);
+  border: 1px solid var(--rule);
+  color: var(--text-2);
+}
+
 /* ---- Forms ------------------------------------------------------------------------------- */
 
 .editor { display: grid; gap: 22px; }
+
+/* Save stays in reach while the form scrolls. */
+.editor-actions {
+  position: sticky;
+  bottom: 0;
+  z-index: 2;
+  margin: 0 -16px 0 calc(-1 * var(--pad-l));
+  padding: 10px 16px calc(10px + env(safe-area-inset-bottom)) var(--pad-l);
+  background: var(--leaf-solid);
+  border-top: 1px solid var(--rule);
+}
+
+.editor-actions > p { flex-basis: 100%; margin: 0; }
 
 .field {
   display: grid;
@@ -543,21 +581,43 @@ input::placeholder { color: var(--text-2); opacity: 1; }
   white-space: nowrap;
 }
 
-/* Only a top-ply leaf may be clear. */
+/* Only a top-ply leaf may be clear: bookable times are the loudest thing on the page. */
 .time-chip.is-open {
-  background: var(--leaf-solid);
-  color: var(--text);
+  background: var(--hue);
+  color: var(--on-hue);
   border: 1.5px solid var(--text);
   box-shadow: 2px 2px 0 var(--shadow);
+  font-weight: 700;
 }
 
 .time-chip.is-down {
-  background: repeating-linear-gradient(135deg, var(--hatch) 0 1.5px, transparent 1.5px 7px);
+  background: repeating-linear-gradient(135deg, var(--hatch-faint) 0 1px, transparent 1px 7px);
   color: var(--text-2);
-  border: 1.5px dashed var(--rule);
+  border: 1px solid var(--rule);
 }
 
 .time-chip.is-sold { text-decoration: line-through 2px; }
+
+.day--folded > summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 12px;
+  min-height: 44px;
+  list-style: none;
+  cursor: pointer;
+}
+
+.day--folded > summary::-webkit-details-marker { display: none; }
+
+.day--folded > summary::before {
+  content: "+";
+  width: 20px;
+  font: 700 var(--size) / 1 var(--head);
+}
+
+.day--folded[open] > summary::before { content: "–"; }
+.day--folded > summary .day-title { font: 700 var(--size) / 1.3 var(--serif); }
 
 /* ---- Insights ---------------------------------------------------------------------------- */
 
@@ -616,8 +676,16 @@ input::placeholder { color: var(--text-2); opacity: 1; }
   text-transform: uppercase;
 }
 
-.ev-BookingOpened .ev-kind,
-.ev-SeatsReturned .ev-kind { text-decoration: underline 2px; text-underline-offset: 4px; }
+.ev-kind.is-open {
+  justify-self: start;
+  padding: 2px 7px;
+  background: var(--hue);
+  color: var(--on-hue);
+  border-radius: 2px;
+}
+
+.ev-link { display: block; margin-top: 2px; }
+.ev-link a { white-space: nowrap; }
 
 .ledger-table { width: 100%; border-collapse: collapse; }
 
@@ -643,6 +711,13 @@ input::placeholder { color: var(--text-2); opacity: 1; }
 .spine { display: none; }
 
 .noscript { padding: 24px; }
+
+/* Phones: a narrower binding margin buys the text a longer line. */
+@media (max-width: 719px) {
+  .page { padding-left: calc(env(safe-area-inset-left) + 6px); padding-right: 6px; }
+  .leaf { --bind: 26px; --pad-l: 34px; padding-right: 14px; }
+  .editor-actions { margin-right: -14px; padding-right: 14px; }
+}
 
 /* ---- Wider screens: the rail grows, leaves deal into two then four columns ---------------- */
 

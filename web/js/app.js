@@ -14,10 +14,6 @@ const SECTIONS = [
   { id: "setup", label: "Setup", hue: "#7650bf" },
 ];
 
-const INK = M.hexToRgb("#161412");
-const PAPER = M.hexToRgb("#f7f2e6");
-const SMOKE = M.hexToRgb("#141210");
-const IVORY = M.hexToRgb("#efe9dc");
 const TOKEN_KEY = "vox-watcher.token";
 const WORKFLOW = "watch.yml";
 const STALE_MINUTES = 30;
@@ -174,28 +170,21 @@ const darkQuery = matchMedia("(prefers-color-scheme: dark)");
 function applyBoard() {
   const section = SECTIONS.find((s) => s.id === app.section) ?? SECTIONS[0];
   const dark = darkQuery.matches;
-  const hue = M.hexToRgb(section.hue);
-  const board = dark ? M.mix(hue, SMOKE, 0.42) : hue;
-  const leaf = dark ? SMOKE : PAPER;
-  const text = dark ? IVORY : INK;
-  // The least opaque leaf whose reading field stays in a fixed luminance band over this board.
-  const alpha = M.solveLeafAlpha(leaf, board, dark ? 0.02 : 0.8, dark);
-  const solid = M.composite(leaf, alpha, board);
+  const p = M.palette(section.hue, dark);
   const root = document.documentElement.style;
-  root.setProperty("--board", M.rgbToHex(board));
+  root.setProperty("--board", M.rgbToHex(p.board));
   root.setProperty("--hue", section.hue);
-  root.setProperty("--on-hue", M.rgbToHex(M.onColor(hue, INK, PAPER)));
-  root.setProperty("--on-board", M.rgbToHex(M.onColor(board, text, dark ? IVORY : INK)));
-  root.setProperty("--leaf", `rgb(${leaf.join(" ")} / ${alpha})`);
-  root.setProperty("--leaf-solid", M.rgbToHex(solid));
-  root.setProperty("--text", M.rgbToHex(text));
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", M.rgbToHex(board));
+  root.setProperty("--on-hue", M.rgbToHex(p.onHue));
+  root.setProperty("--on-board", M.rgbToHex(p.onBoard));
+  root.setProperty("--leaf", `rgb(${p.leaf.join(" ")} / ${p.alpha})`);
+  root.setProperty("--leaf-solid", M.rgbToHex(p.leafSolid));
+  root.setProperty("--text", M.rgbToHex(p.text));
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", M.rgbToHex(p.board));
+  // Tabs keep full-strength hue in both modes; only the open division's board darkens at night.
   for (const s of SECTIONS) {
-    const tabHue = M.hexToRgb(s.hue);
-    const tabColor = dark ? M.mix(tabHue, SMOKE, 0.42) : tabHue;
     const tab = document.querySelector(`.tab[data-id="${s.id}"]`);
-    tab?.style.setProperty("--tab", M.rgbToHex(tabColor));
-    tab?.style.setProperty("--on-tab", M.rgbToHex(M.onColor(tabColor, INK, IVORY)));
+    tab?.style.setProperty("--tab", s.hue);
+    tab?.style.setProperty("--on-tab", M.rgbToHex(M.palette(s.hue, false).onHue));
   }
 }
 
@@ -401,16 +390,31 @@ function renderShowtimes() {
     leaves.push(leaf(w.name, [
       h("p", { class: "muted" }, w.enabled ? "" : "Paused. ", M.describeWatch(w, app.catalog)),
       byDate.size
-        ? [...byDate].map(([date, list]) => h("div", { class: "day" },
-          h("h3", { class: "day-title" }, M.formatDate(date)),
-          [...groupBy(list, (s) => s.experience)].map(([exp, shows]) => h("div", { class: "exp-row" },
-            h("span", { class: "exp" }, exp),
-            h("ul", { class: "times" }, shows.map(timeChip))))))
+        ? [...byDate].map(([date, list]) => dayBlock(date, list))
         : h("p", null, "Nothing listed in this watch's range yet. You'll get an alert as soon as VOX adds showtimes."),
       vox ? h("p", null, link(vox, "Open on VOX", { external: true })) : null,
     ], { wide: true, id: `st-${M.slugify(w.name)}` }));
   }
-  return { intro: "Clear: book now. Face-down: listed, not bookable yet. Struck through: sold out.", leaves };
+  return { intro: "Filled: book now. Face-down: listed, not bookable yet. Struck through: sold out. Days with nothing to book are folded; tap to open.", leaves };
+}
+
+/** A day with something bookable lies open; a day with nothing to book folds to one line. */
+function dayBlock(date, list) {
+  const rows = [...groupBy(list, (s) => s.experience)].map(([exp, shows]) => h("div", { class: "exp-row" },
+    h("span", { class: "exp" }, exp),
+    h("ul", { class: "times" }, shows.map(timeChip))));
+  const open = list.filter((s) => s.bookable).length;
+  if (open) {
+    return h("div", { class: "day" },
+      h("h3", { class: "day-title" }, M.formatDate(date), h("span", { class: "muted" }, ` · ${open} bookable`)),
+      rows);
+  }
+  const sold = list.filter((s) => s.everBookable).length;
+  return h("details", { class: "day day--folded" },
+    h("summary", null,
+      h("span", { class: "day-title" }, M.formatDate(date)),
+      h("span", { class: "muted" }, `${list.length} listed, ${sold ? `${sold} sold out, ` : ""}none bookable yet`)),
+    rows);
 }
 
 function timeChip(s) {
@@ -433,7 +437,7 @@ function renderWatches() {
   app.watches.forEach((w, i) => {
     const alerts = [w.alerts.bookingOpened && "booking opens", w.alerts.seatsReturned && "seats come back", w.alerts.newShowtimes && "new showtimes", w.alerts.soldOut && "sold out"].filter(Boolean);
     leaves.push(leaf(w.name, [
-      h("p", { class: `onoff ${w.enabled ? "is-on" : "is-off"}` }, h("span", { class: "hole", "aria-hidden": "true" }), w.enabled ? "Watching" : "Paused"),
+      h("p", { class: `onoff ${w.enabled ? "is-on" : "is-off"}` }, w.enabled ? "Watching" : "Paused"),
       h("p", null, M.describeWatch(w, app.catalog)),
       h("p", { class: "muted" }, alerts.length ? `Alerts when ${alerts.join(", ")}.` : "All alerts are off."),
       h("div", { class: "actions" },
@@ -486,11 +490,17 @@ function renderEditor() {
   const movieList = h("div", { class: "chips", id: "movie-chips" });
   const fillMovies = () => {
     const q = e.filter.trim().toLowerCase();
-    const known = movies.filter((m) => !q || M.prop(m, "Name").toLowerCase().includes(q) || M.prop(m, "Slug").includes(q));
-    const unknown = d.movies.filter((slug) => !movies.some((m) => M.prop(m, "Slug") === slug));
+    const slugOf = (m) => M.prop(m, "Slug");
+    // Unfiltered, only the picked movies show, so Save stays close. Search or "Show all" lists the rest.
+    const known = q
+      ? movies.filter((m) => M.prop(m, "Name").toLowerCase().includes(q) || slugOf(m).includes(q))
+      : e.showAllMovies ? movies : movies.filter((m) => d.movies.includes(slugOf(m)));
+    const hidden = !q && !e.showAllMovies ? movies.length - known.length : 0;
+    const unknown = d.movies.filter((slug) => !movies.some((m) => slugOf(m) === slug));
     movieList.replaceChildren(...[
       ...unknown.map((slug) => chip("movie", slug, true, (on) => toggleIn(d.movies, slug, on), { note: "(not on VOX yet)" })),
-      ...known.map((m) => chip("movie", M.prop(m, "Name"), d.movies.includes(M.prop(m, "Slug")), (on) => toggleIn(d.movies, M.prop(m, "Slug"), on))),
+      ...known.map((m) => chip("movie", M.prop(m, "Name"), d.movies.includes(slugOf(m)), (on) => toggleIn(d.movies, slugOf(m), on))),
+      hidden ? h("button", { class: "btn btn-small", type: "button", onclick: () => { e.showAllMovies = true; fillMovies(); } }, `Show all ${movies.length} movies`) : null,
       !known.length && q ? h("p", { class: "muted" }, "No movie on VOX matches. Add it by its VOX name below if it isn't listed yet.") : null,
     ].filter(Boolean));
   };
@@ -571,12 +581,13 @@ function renderEditor() {
         chip("a3", "New showtimes are listed", d.alerts.newShowtimes, (on) => { d.alerts.newShowtimes = on; }),
         chip("a4", "A show sells out", d.alerts.soldOut, (on) => { d.alerts.soldOut = on; }))),
 
-    h("div", { class: "actions" },
+    h("div", { class: "actions editor-actions" },
       h("button", { class: "btn btn-primary", type: "submit", disabled: !canWrite() || e.pending, "aria-describedby": canWrite() ? null : "no-token" }, e.pending ? "Saving…" : "Save watch", arrow()),
       h("button", { class: "btn", type: "button", disabled: e.pending, onclick: () => stopEdit() }, "Cancel"),
-      e.index >= 0 ? h("button", { class: `btn btn-danger${e.confirmDelete ? " is-armed" : ""}`, type: "button", disabled: !canWrite() || e.pending,
-        onclick: () => { if (e.confirmDelete) deleteWatch(); else { e.confirmDelete = true; render(); } } }, e.confirmDelete ? "Tap again to delete" : "Delete") : null),
-    canWrite() ? null : h("p", { class: "muted", id: "no-token" }, "Saving needs your GitHub token. ", link("#setup", "Add it in Setup")));
+      canWrite() ? null : h("p", { class: "muted", id: "no-token" }, "Saving needs your GitHub token · ", link("#setup", "Add it in Setup"))),
+    e.index >= 0 ? h("div", { class: "actions" },
+      h("button", { class: `btn btn-danger${e.confirmDelete ? " is-armed" : ""}`, type: "button", disabled: !canWrite() || e.pending,
+        onclick: () => { if (e.confirmDelete) deleteWatch(); else { e.confirmDelete = true; render(); } } }, e.confirmDelete ? "Tap again to delete this watch" : "Delete this watch")) : null);
 
   return leaf(e.index >= 0 ? `Edit: ${app.watches[e.index].name}` : "New watch", form, { wide: true, cls: e.pending ? "is-pending" : "", id: "editor" });
 }
@@ -734,10 +745,15 @@ function renderLog() {
   const leaves = [];
   if (!app.events.length) leaves.push(leaf("Nothing yet", h("p", null, "Every change the watcher sees lands here: bookings opening, seats coming back, new showtimes, sell-outs.")));
   for (const [day, events] of [...groupBy(app.events.slice(0, 300), (e) => e.day)].slice(0, 30)) {
-    leaves.push(leaf(M.formatDate(day), h("ul", { class: "ledger" }, events.map((e) => h("li", { class: `ev ev-${e.kind}` },
-      h("span", { class: "mono" }, e.clock),
-      h("span", { class: "ev-kind" }, e.label),
-      h("span", null, [e.movie, e.date && e.time ? `${e.date} ${M.formatTime(e.time)}` : e.date, e.experience, e.cinema].filter(Boolean).join(" · ")))))));
+    leaves.push(leaf(M.formatDate(day), h("ul", { class: "ledger" }, events.map((e) => {
+      const opened = e.kind === "BookingOpened" || e.kind === "SeatsReturned";
+      const url = opened ? M.bookingUrl(site(), e.id) : null;
+      return h("li", { class: `ev ev-${e.kind}` },
+        h("span", { class: "mono" }, e.clock),
+        h("span", { class: `ev-kind${opened ? " is-open" : ""}` }, e.label),
+        h("span", null, [e.movie, e.date && e.time ? `${e.date} ${M.formatTime(e.time)}` : e.date, e.experience, e.cinema].filter(Boolean).join(" · "),
+          url ? h("span", { class: "ev-link" }, link(url, "Booking page", { external: true })) : null));
+    }))));
   }
   return { intro: "Every change the watcher noticed, newest first. Cairo time.", leaves };
 }

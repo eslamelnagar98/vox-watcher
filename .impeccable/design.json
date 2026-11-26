@@ -1,0 +1,689 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-11-26T16:29:17+00:00",
+  "title": "Design System: VOX Watcher",
+  "extensions": {
+    "colorMeta": {
+      "chrome-yellow": {
+        "role": "primary",
+        "displayName": "Chrome Yellow",
+        "canonical": "oklch(83.0% 0.164 88.4)",
+        "purpose": "Now board; app theme and manifest colour.",
+        "tonalRamp": [
+          "#110a00",
+          "#2f2200",
+          "#503d00",
+          "#745a00",
+          "#9e7b00",
+          "#ca9e00",
+          "#f6c326",
+          "#ffedc0"
+        ]
+      },
+      "oxide-orange": {
+        "role": "primary",
+        "displayName": "Oxide Orange",
+        "canonical": "oklch(66.4% 0.175 42.8)",
+        "purpose": "Showtimes board.",
+        "tonalRamp": [
+          "#1b0400",
+          "#411300",
+          "#6d2600",
+          "#9c3a00",
+          "#d15208",
+          "#fc793f",
+          "#ffb79a",
+          "#ffe9e0"
+        ]
+      },
+      "grass": {
+        "role": "primary",
+        "displayName": "Grass",
+        "canonical": "oklch(62.5% 0.147 136.5)",
+        "purpose": "Watches board.",
+        "tonalRamp": [
+          "#030f00",
+          "#0f2c00",
+          "#1f4c00",
+          "#316f00",
+          "#549332",
+          "#78b958",
+          "#9de07e",
+          "#ceffb9"
+        ]
+      },
+      "teal": {
+        "role": "primary",
+        "displayName": "Teal",
+        "canonical": "oklch(63.2% 0.106 189.2)",
+        "purpose": "Insights board.",
+        "tonalRamp": [
+          "#000f0d",
+          "#002b29",
+          "#004a47",
+          "#006c67",
+          "#00948d",
+          "#40bab2",
+          "#6de1d9",
+          "#b3fff9"
+        ]
+      },
+      "ultramarine": {
+        "role": "primary",
+        "displayName": "Ultramarine",
+        "canonical": "oklch(47.0% 0.160 263.4)",
+        "purpose": "Log board.",
+        "tonalRamp": [
+          "#000037",
+          "#001766",
+          "#0d3592",
+          "#2b56b6",
+          "#4c7bdf",
+          "#74a2ff",
+          "#b0cbff",
+          "#e6efff"
+        ]
+      },
+      "violet": {
+        "role": "primary",
+        "displayName": "Violet",
+        "canonical": "oklch(52.8% 0.167 296.0)",
+        "purpose": "Setup board.",
+        "tonalRamp": [
+          "#100029",
+          "#2e005f",
+          "#4b1d8b",
+          "#6841af",
+          "#8b66d7",
+          "#af8cff",
+          "#cfbfff",
+          "#f0ebff"
+        ]
+      },
+      "chrome-yellow-night": {
+        "role": "primary",
+        "displayName": "Chrome Yellow, night board",
+        "canonical": "oklch(66.0% 0.135 88.3)",
+        "purpose": "Derived at runtime: OKLCH L 0.66 (source L >= 0.78), max in-gamut chroma.",
+        "tonalRamp": [
+          "#110a00",
+          "#2f2200",
+          "#503d00",
+          "#745a00",
+          "#9e7b00",
+          "#c79f2a",
+          "#efc558",
+          "#ffedc0"
+        ]
+      },
+      "oxide-orange-night": {
+        "role": "primary",
+        "displayName": "Oxide Orange, night board",
+        "canonical": "oklch(45.0% 0.134 42.6)",
+        "purpose": "Derived at runtime: OKLCH L 0.45, max in-gamut chroma.",
+        "tonalRamp": [
+          "#1b0400",
+          "#411300",
+          "#6d2500",
+          "#993d0f",
+          "#c16139",
+          "#ea865d",
+          "#ffb79a",
+          "#ffe9e0"
+        ]
+      },
+      "grass-night": {
+        "role": "primary",
+        "displayName": "Grass, night board",
+        "canonical": "oklch(45.0% 0.135 136.6)",
+        "purpose": "Derived at runtime: OKLCH L 0.45, max in-gamut chroma.",
+        "tonalRamp": [
+          "#030f00",
+          "#0f2c00",
+          "#1f4c00",
+          "#356e10",
+          "#57923b",
+          "#7bb860",
+          "#a1df85",
+          "#ceffb9"
+        ]
+      },
+      "teal-night": {
+        "role": "primary",
+        "displayName": "Teal, night board",
+        "canonical": "oklch(45.0% 0.078 188.8)",
+        "purpose": "Derived at runtime: OKLCH L 0.45, max in-gamut chroma.",
+        "tonalRamp": [
+          "#000f0d",
+          "#002b28",
+          "#004a46",
+          "#136c66",
+          "#408f89",
+          "#67b5ae",
+          "#8ddbd5",
+          "#b3fff8"
+        ]
+      },
+      "ultramarine-night": {
+        "role": "primary",
+        "displayName": "Ultramarine, night board",
+        "canonical": "oklch(45.0% 0.161 263.5)",
+        "purpose": "Derived at runtime: OKLCH L 0.45, max in-gamut chroma.",
+        "tonalRamp": [
+          "#000037",
+          "#001667",
+          "#0e3493",
+          "#2b56b7",
+          "#4c7bdf",
+          "#74a2ff",
+          "#b0cbff",
+          "#e6efff"
+        ]
+      },
+      "violet-night": {
+        "role": "primary",
+        "displayName": "Violet, night board",
+        "canonical": "oklch(45.0% 0.167 295.8)",
+        "purpose": "Derived at runtime: OKLCH L 0.45, max in-gamut chroma.",
+        "tonalRamp": [
+          "#100029",
+          "#2e005f",
+          "#4b1e8b",
+          "#6841af",
+          "#8b66d7",
+          "#af8cff",
+          "#cfbfff",
+          "#f0ebff"
+        ]
+      },
+      "vermilion": {
+        "role": "secondary",
+        "displayName": "Errata Vermilion",
+        "canonical": "oklch(54.1% 0.187 31.7)",
+        "purpose": "Errors and armed destructive actions only.",
+        "tonalRamp": [
+          "#1f0000",
+          "#490500",
+          "#790e00",
+          "#ad1900",
+          "#d9462f",
+          "#ff735a",
+          "#ffb5a6",
+          "#ffe9e4"
+        ]
+      },
+      "on-vermilion": {
+        "role": "secondary",
+        "displayName": "Slip Paper",
+        "canonical": "oklch(98.2% 0.015 77.1)",
+        "purpose": "Text on vermilion (5.2:1).",
+        "tonalRamp": [
+          "#0f0a05",
+          "#28231c",
+          "#443f37",
+          "#635d54",
+          "#857f76",
+          "#aaa49a",
+          "#d0c9c0",
+          "#f4ede3"
+        ]
+      },
+      "ink": {
+        "role": "neutral",
+        "displayName": "Print Ink",
+        "canonical": "oklch(19.3% 0.005 67.5)",
+        "purpose": "Day text on leaves (14.9:1 on every solved leaf); control borders.",
+        "tonalRamp": [
+          "#0d0b09",
+          "#262421",
+          "#423f3d",
+          "#605d5b",
+          "#82807d",
+          "#a7a4a1",
+          "#cdcac7",
+          "#f1eeeb"
+        ]
+      },
+      "paper": {
+        "role": "neutral",
+        "displayName": "Book Paper",
+        "canonical": "oklch(96.2% 0.017 88.0)",
+        "purpose": "Day leaf at solved alpha; text on ultramarine and violet.",
+        "tonalRamp": [
+          "#0e0b04",
+          "#27241b",
+          "#433f36",
+          "#615d53",
+          "#848075",
+          "#a9a499",
+          "#cfcabf",
+          "#f3eee2"
+        ]
+      },
+      "smoke": {
+        "role": "neutral",
+        "displayName": "Smoke",
+        "canonical": "oklch(18.4% 0.005 67.5)",
+        "purpose": "Night leaf at solved alpha.",
+        "tonalRamp": [
+          "#0d0b09",
+          "#262421",
+          "#423f3d",
+          "#605d5b",
+          "#82807d",
+          "#a7a4a1",
+          "#cdcac7",
+          "#f1eeeb"
+        ]
+      },
+      "ivory": {
+        "role": "neutral",
+        "displayName": "Ivory",
+        "canonical": "oklch(93.5% 0.018 86.1)",
+        "purpose": "Night text on leaves (12.4:1) and on dark boards.",
+        "tonalRamp": [
+          "#0f0b04",
+          "#28241a",
+          "#443f35",
+          "#625d52",
+          "#858074",
+          "#aaa498",
+          "#d0cabd",
+          "#f4eee1"
+        ]
+      }
+    },
+    "sectionPalettes": [
+      {
+        "section": "now",
+        "hue": "chrome-yellow",
+        "nightBoard": "chrome-yellow-night",
+        "leafAlphaDay": 0.772,
+        "leafAlphaNight": 0.837,
+        "onBoardDay": "ink",
+        "onBoardNight": "ink",
+        "onHue": "ink"
+      },
+      {
+        "section": "showtimes",
+        "hue": "oxide-orange",
+        "nightBoard": "oxide-orange-night",
+        "leafAlphaDay": 0.903,
+        "leafAlphaNight": 0.652,
+        "onBoardDay": "ink",
+        "onBoardNight": "ivory",
+        "onHue": "ink"
+      },
+      {
+        "section": "watches",
+        "hue": "grass",
+        "nightBoard": "grass-night",
+        "leafAlphaDay": 0.897,
+        "leafAlphaNight": 0.697,
+        "onBoardDay": "ink",
+        "onBoardNight": "ivory",
+        "onHue": "ink"
+      },
+      {
+        "section": "insights",
+        "hue": "teal",
+        "nightBoard": "teal-night",
+        "leafAlphaDay": 0.903,
+        "leafAlphaNight": 0.687,
+        "onBoardDay": "ink",
+        "onBoardNight": "ivory",
+        "onHue": "ink"
+      },
+      {
+        "section": "log",
+        "hue": "ultramarine",
+        "nightBoard": "ultramarine-night",
+        "leafAlphaDay": 0.932,
+        "leafAlphaNight": 0.666,
+        "onBoardDay": "paper",
+        "onBoardNight": "ivory",
+        "onHue": "paper"
+      },
+      {
+        "section": "setup",
+        "hue": "violet",
+        "nightBoard": "violet-night",
+        "leafAlphaDay": 0.924,
+        "leafAlphaNight": 0.652,
+        "onBoardDay": "paper",
+        "onBoardNight": "ivory",
+        "onHue": "paper"
+      }
+    ],
+    "leafSolve": {
+      "dayLeaf": "paper",
+      "nightLeaf": "smoke",
+      "dayMinLuminance": 0.8,
+      "nightMaxLuminance": 0.02,
+      "method": "least alpha (binary search, rounded up to 0.001) whose sRGB source-over composite over the board meets the luminance target"
+    },
+    "nightBoard": {
+      "space": "oklch",
+      "lightness": 0.45,
+      "lightnessForLightHues": 0.66,
+      "lightHueThreshold": 0.78,
+      "chroma": "source chroma, reduced only as far as needed to stay in sRGB gamut"
+    },
+    "derivedTones": [
+      {
+        "name": "text-2",
+        "value": "color-mix(in srgb, var(--text) 74%, var(--board))",
+        "purpose": "Secondary text."
+      },
+      {
+        "name": "rule",
+        "value": "color-mix(in srgb, var(--text) 26%, transparent)",
+        "purpose": "1px rules between rows; chip borders."
+      },
+      {
+        "name": "hatch",
+        "value": "color-mix(in srgb, var(--text) 18%, transparent)",
+        "purpose": "Disabled button hatch."
+      },
+      {
+        "name": "hatch-faint",
+        "value": "color-mix(in srgb, var(--text) 11%, transparent)",
+        "purpose": "Face-down chips and paused tags."
+      },
+      {
+        "name": "bind-tint",
+        "value": "color-mix(in srgb, var(--text) 6%, transparent)",
+        "purpose": "Binding strip on leaves."
+      },
+      {
+        "name": "grain",
+        "value": "inline SVG fractalNoise, baseFrequency .85, 2 octaves, alpha .09, 180px tile",
+        "purpose": "Board texture under every page."
+      }
+    ],
+    "typographyMeta": {
+      "display": {
+        "displayName": "Board Title",
+        "purpose": "The section name on its board, once per page; balanced wrap."
+      },
+      "title": {
+        "displayName": "Leaf Title",
+        "purpose": "Leaf titles, field labels and legends, experience names (0.06em), table heads."
+      },
+      "label": {
+        "displayName": "Control Label",
+        "purpose": "Buttons and status tags; arrow glyphs revert to the serif."
+      },
+      "tab": {
+        "displayName": "Tab Label",
+        "purpose": "Vertical divider-tab labels; 15px under 720px, 17px from 720px."
+      },
+      "body": {
+        "displayName": "Book Serif",
+        "purpose": "All reading text at one size; 66ch in leaves, 62ch for intros and slips."
+      },
+      "time": {
+        "displayName": "Time",
+        "purpose": "Time chips (700 when bookable) and booking times."
+      },
+      "mono-label": {
+        "displayName": "Mono Label",
+        "purpose": "Freshness status, chart axes, ledger timestamps, desktop spine."
+      }
+    },
+    "fonts": [
+      {
+        "family": "Archivo",
+        "source": "web/fonts/archivo-latin.woff2 (self-hosted, preloaded, OFL)",
+        "weight": "100 900",
+        "stretch": "62% 125%",
+        "display": "swap"
+      }
+    ],
+    "shadows": [
+      {
+        "name": "leaf-cut",
+        "value": "3px 3px 0 var(--shadow), inset 1.5px 1.5px 0 var(--edge)",
+        "purpose": "Every leaf."
+      },
+      {
+        "name": "card-cut",
+        "value": "2px 2px 0 var(--shadow)",
+        "purpose": "Tabs, primary buttons, bookable time chips, slips."
+      },
+      {
+        "name": "punch-hole",
+        "value": "inset 0 0 0 1.5px rgb(0 0 0 / 0.32), inset 1px 2px 2px rgb(0 0 0 / 0.45)",
+        "purpose": "The two binding holes on every leaf."
+      },
+      {
+        "name": "punched-selection",
+        "value": "inset 1px 1.5px 2px rgb(0 0 0 / 0.55)",
+        "purpose": "The hole of a selected choice chip."
+      },
+      {
+        "name": "shadow-colour",
+        "value": "day: color-mix(in srgb, #161412 30%, transparent); night: rgb(0 0 0 / 0.55)",
+        "purpose": "--shadow"
+      },
+      {
+        "name": "edge-and-sheen",
+        "value": "day: edge rgb(255 255 255 / 0.7), sheen rgb(255 255 255 / 0.24); night: edge 0.1, sheen 0.05",
+        "purpose": "Acetate cut edge and 115deg sheen."
+      }
+    ],
+    "motion": [
+      {
+        "name": "hinge",
+        "value": "90ms steps(2, jump-end)",
+        "purpose": "Leaves turn on their binding when a section opens: perspective(1400px) rotateY(-18deg) to flat, origin left centre. Gated by prefers-reduced-motion: no-preference."
+      },
+      {
+        "name": "pending",
+        "value": "perspective(1400px) rotateY(-10deg)",
+        "purpose": "Static half-hinged pose while a leaf is saving; remains under reduced motion as a still state."
+      },
+      {
+        "name": "busy-blink",
+        "value": "1.2s steps(2, jump-none) infinite",
+        "purpose": "Freshness dot while a check runs. Not yet gated by reduced motion; it should be."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "phone",
+        "value": "max-width: 719px",
+        "purpose": "1 column, 14px gap, 46px rail, 26px binding, 6px page padding, 15px tab labels."
+      },
+      {
+        "name": "wide",
+        "value": "min-width: 720px",
+        "purpose": "2 columns, 18px gap, 60px rail, 30px binding, page 30px/22px, wide leaf spans row."
+      },
+      {
+        "name": "desk",
+        "value": "min-width: 1200px",
+        "purpose": "4 columns, book max 1480px centred, page indent 64px, wide leaf spans 2, vertical spine."
+      }
+    ],
+    "constraints": [
+      "CSP style-src 'self': no style attributes or <style> blocks in HTML; runtime values via CSSOM style.setProperty.",
+      "CSP img-src 'self' data: textures as data: SVG in CSS; font-src 'self': fonts self-hosted."
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "The open section's full-strength hue, ink border, hard 2px cut shadow; BOOK, Save watch, New watch, Save token. No hover style exists; pressed inverts.",
+      "html": "<div class=\"ds-surface\"><a class=\"ds-btn ds-btn-primary\" href=\"#\">BOOK <span class=\"ds-arrow\" aria-hidden=\"true\">&rarr;</span></a></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 10px 16px; border: 1.5px solid var(--text, #161412); border-radius: 3px; background: transparent; color: var(--text, #161412); font: 720 17px/1 \"Archivo\", \"Univers Condensed\", \"Helvetica Neue\", \"Arial Narrow\", sans-serif; font-stretch: 76%; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; cursor: pointer; } .ds-btn:active { background: var(--text, #161412); color: var(--leaf-solid, #f6e7b9); } .ds-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; } .ds-arrow { font-family: \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; font-weight: 400; letter-spacing: 0; } .ds-btn-primary { background: var(--hue, #f3c01f); color: var(--on-hue, #161412); box-shadow: 2px 2px 0 var(--shadow, rgb(22 20 18 / 0.3)); }"
+    },
+    {
+      "name": "Outline Button",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Default control: transparent, 1.5px text-coloured border, condensed caps; ↗ marks links that leave the app.",
+      "html": "<div class=\"ds-surface\"><a class=\"ds-btn\" href=\"#\">RUN HISTORY <span class=\"ds-arrow\" aria-hidden=\"true\">&#8599;</span></a> <button class=\"ds-btn ds-btn-small\" type=\"button\">SHOW 7 MORE</button></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 10px 16px; border: 1.5px solid var(--text, #161412); border-radius: 3px; background: transparent; color: var(--text, #161412); font: 720 17px/1 \"Archivo\", \"Univers Condensed\", \"Helvetica Neue\", \"Arial Narrow\", sans-serif; font-stretch: 76%; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; cursor: pointer; } .ds-btn:active { background: var(--text, #161412); color: var(--leaf-solid, #f6e7b9); } .ds-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; } .ds-arrow { font-family: \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; font-weight: 400; letter-spacing: 0; } .ds-btn-small { min-height: 40px; padding: 6px 12px; }"
+    },
+    {
+      "name": "Disabled Button (face-down)",
+      "kind": "button",
+      "refersTo": "button-outline",
+      "description": "Unavailable controls lie face-down: 135deg hatch, dashed edge in secondary text, no shadow.",
+      "html": "<div class=\"ds-surface\"><button class=\"ds-btn\" type=\"button\" disabled>CHECK NOW</button></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 10px 16px; border: 1.5px solid var(--text, #161412); border-radius: 3px; background: transparent; color: var(--text, #161412); font: 720 17px/1 \"Archivo\", \"Univers Condensed\", \"Helvetica Neue\", \"Arial Narrow\", sans-serif; font-stretch: 76%; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; cursor: pointer; } .ds-btn:active { background: var(--text, #161412); color: var(--leaf-solid, #f6e7b9); } .ds-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; } .ds-arrow { font-family: \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; font-weight: 400; letter-spacing: 0; } .ds-btn:disabled { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--text, #161412) 18%, transparent) 0 1.5px, transparent 1.5px 7px); color: color-mix(in srgb, var(--text, #161412) 74%, var(--board, #f3c01f)); border-style: dashed; border-color: color-mix(in srgb, var(--text, #161412) 74%, var(--board, #f3c01f)); box-shadow: none; cursor: not-allowed; }"
+    },
+    {
+      "name": "Armed Delete",
+      "kind": "button",
+      "refersTo": "button-danger-armed",
+      "description": "A destructive outline button turns vermilion only once armed for confirmation.",
+      "html": "<div class=\"ds-surface\"><button class=\"ds-btn ds-btn-armed\" type=\"button\">DELETE THIS WATCH</button></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 10px 16px; border: 1.5px solid var(--text, #161412); border-radius: 3px; background: transparent; color: var(--text, #161412); font: 720 17px/1 \"Archivo\", \"Univers Condensed\", \"Helvetica Neue\", \"Arial Narrow\", sans-serif; font-stretch: 76%; letter-spacing: 0.08em; text-transform: uppercase; text-decoration: none; cursor: pointer; } .ds-btn:active { background: var(--text, #161412); color: var(--leaf-solid, #f6e7b9); } .ds-btn:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; } .ds-arrow { font-family: \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; font-weight: 400; letter-spacing: 0; } .ds-btn-armed { background: var(--vermilion, #c4311a); color: var(--on-vermilion, #fff8ee); border-color: var(--vermilion, #c4311a); }"
+    },
+    {
+      "name": "Time Chips",
+      "kind": "chip",
+      "refersTo": "time-chip-open",
+      "description": "Bookable: filled hue, ink border, cut shadow, mono 700, links to VOX. Not yet bookable: face-down faint hatch. Sold out: face-down and struck through.",
+      "html": "<div class=\"ds-surface\"><ul class=\"ds-times\"><li><a class=\"ds-time ds-time-open\" href=\"#\">11:00pm <span aria-hidden=\"true\">&#8599;</span></a></li><li><span class=\"ds-time ds-time-down\">7:15pm</span></li><li><span class=\"ds-time ds-time-down ds-time-sold\">3:30pm</span></li></ul></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-times { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; } .ds-time { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; padding: 8px 10px; border-radius: 3px; font: 600 17px/1 ui-monospace, \"SF Mono\", \"Cascadia Mono\", Menlo, Consolas, monospace; text-decoration: none; white-space: nowrap; color: var(--text, #161412); } .ds-time-open { background: var(--hue, #f3c01f); color: var(--on-hue, #161412); border: 1.5px solid var(--text, #161412); box-shadow: 2px 2px 0 var(--shadow, rgb(22 20 18 / 0.3)); font-weight: 700; } .ds-time-open:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; } .ds-time-down { background: repeating-linear-gradient(135deg, color-mix(in srgb, var(--text, #161412) 11%, transparent) 0 1px, transparent 1px 7px); color: color-mix(in srgb, var(--text, #161412) 74%, var(--board, #f3c01f)); border: 1px solid color-mix(in srgb, var(--text, #161412) 26%, transparent); } .ds-time-sold { text-decoration: line-through 2px; }"
+    },
+    {
+      "name": "Choice Chip (punched hole)",
+      "kind": "chip",
+      "refersTo": "choice-chip",
+      "description": "Selectable option; unselected shows a dashed ring, selected punches the hole through to the board.",
+      "html": "<div class=\"ds-surface ds-chips\"><label class=\"ds-chip\"><input type=\"checkbox\" checked><span class=\"ds-hole\" aria-hidden=\"true\"></span>City Centre Almaza</label><label class=\"ds-chip\"><input type=\"checkbox\"><span class=\"ds-hole\" aria-hidden=\"true\"></span>Mall of Egypt</label></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-chips { display: flex; flex-wrap: wrap; gap: 8px; } .ds-chip { position: relative; display: inline-flex; align-items: center; gap: 10px; min-height: 44px; padding: 8px 14px 8px 12px; border: 1.5px solid color-mix(in srgb, var(--text, #161412) 26%, transparent); border-radius: 3px; font: 400 17px/1.25 \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; cursor: pointer; } .ds-chip input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; } .ds-hole { flex: none; width: 14px; height: 14px; border-radius: 50%; border: 1.5px dashed color-mix(in srgb, var(--text, #161412) 74%, var(--board, #f3c01f)); } .ds-chip:has(input:checked) { border-color: var(--text, #161412); } .ds-chip:has(input:checked) .ds-hole { border: 0; background: var(--board, #f3c01f); box-shadow: inset 1px 1.5px 2px rgb(0 0 0 / 0.55); } .ds-chip:has(input:focus-visible) { outline: 3px solid var(--text, #161412); outline-offset: 2px; }"
+    },
+    {
+      "name": "Text Input",
+      "kind": "input",
+      "refersTo": "text-input",
+      "description": "48px field, 1.5px ink border, serif text, leaf tone deepened slightly toward the ink; condensed caps label above.",
+      "html": "<div class=\"ds-surface\"><label class=\"ds-field\">NAME<input class=\"ds-input\" type=\"text\" placeholder=\"Find a movie\"></label></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-field { display: grid; gap: 8px; font: 760 17px/1.2 \"Archivo\", \"Univers Condensed\", \"Helvetica Neue\", \"Arial Narrow\", sans-serif; font-stretch: 72%; letter-spacing: 0.08em; } .ds-input { width: 100%; min-height: 48px; padding: 10px 12px; border: 1.5px solid var(--text, #161412); border-radius: 3px; background: color-mix(in srgb, var(--leaf-solid, #f6e7b9) 70%, var(--text, #161412) 4%); color: var(--text, #161412); font: 400 17px/1.3 \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; letter-spacing: 0; appearance: none; } .ds-input::placeholder { color: color-mix(in srgb, var(--text, #161412) 74%, var(--board, #f3c01f)); opacity: 1; } .ds-input:focus-visible { outline: 3px solid currentColor; outline-offset: 3px; }"
+    },
+    {
+      "name": "Tab Rail",
+      "kind": "nav",
+      "refersTo": "tab",
+      "description": "Divider tabs down the right fore edge; length follows extent (flex-grow 1 + log2(1 + n)); the open tab steps out flush and is cut from the board.",
+      "html": "<div class=\"ds-rail-demo\"><nav class=\"ds-rail\" aria-label=\"Sections\"><a class=\"ds-tab ds-tab-now\" href=\"#\" aria-current=\"page\"><span>NOW</span></a><a class=\"ds-tab ds-tab-showtimes\" href=\"#\"><span>SHOWTIMES</span></a><a class=\"ds-tab ds-tab-watches\" href=\"#\"><span>WATCHES</span></a><a class=\"ds-tab ds-tab-insights\" href=\"#\"><span>INSIGHTS</span></a><a class=\"ds-tab ds-tab-log\" href=\"#\"><span>LOG</span></a><a class=\"ds-tab ds-tab-setup\" href=\"#\"><span>SETUP</span></a></nav></div>",
+      "css": ".ds-rail-demo { display: flex; justify-content: flex-end; height: 520px; background: var(--board, #f3c01f); } .ds-rail { display: flex; flex-direction: column; width: 60px; padding: 12px 0; } .ds-tab { flex: var(--grow, 1) 1 0; min-height: 62px; max-height: 210px; margin: 0 0 3px 12px; display: flex; align-items: center; justify-content: center; background: var(--tab); color: var(--on-tab, #161412); border-radius: 0 9px 9px 0; box-shadow: 2px 2px 0 var(--shadow, rgb(22 20 18 / 0.3)); text-decoration: none; } .ds-tab span { writing-mode: vertical-rl; font: 750 17px/1 \"Archivo\", \"Univers Condensed\", \"Helvetica Neue\", \"Arial Narrow\", sans-serif; font-stretch: 70%; letter-spacing: 0.1em; text-transform: uppercase; white-space: nowrap; } .ds-tab[aria-current=\"page\"] { margin-left: 0; background: var(--board, #f3c01f); color: var(--on-board, #161412); border: 1.5px solid var(--on-board, #161412); border-left: 0; } .ds-tab:focus-visible { outline: 3px solid currentColor; outline-offset: -5px; } .ds-tab-now { --grow: 3; --tab: #f3c01f; } .ds-tab-showtimes { --grow: 4; --tab: #e8672a; } .ds-tab-watches { --grow: 2; --tab: #5b9b3a; } .ds-tab-insights { --grow: 2; --tab: #139e97; } .ds-tab-log { --grow: 2.5; --tab: #2853b3; --on-tab: #f7f2e6; } .ds-tab-setup { --grow: 1; --tab: #7650bf; --on-tab: #f7f2e6; }"
+    },
+    {
+      "name": "Leaf",
+      "kind": "card",
+      "refersTo": "leaf",
+      "description": "Milk-acetate sheet at its solved alpha over the board: binding strip, two punched holes, sheen, hard 3px cut shadow.",
+      "html": "<div class=\"ds-board\"><section class=\"ds-leaf\"><h2 class=\"ds-leaf-title\">THE WATCHER</h2><p><strong>Checking VOX right now.</strong> The last check finished 4 min ago.</p><p class=\"ds-mono\">11:00pm &middot; Wed 16 Dec</p></section></div>",
+      "css": ".ds-board { padding: 24px; background: var(--board, #f3c01f); } .ds-leaf { --bind: 30px; position: relative; padding: 16px 16px 18px calc(var(--bind) + 12px); background: linear-gradient(115deg, var(--sheen, rgb(255 255 255 / 0.24)) 0%, transparent 45%), linear-gradient(to right, color-mix(in srgb, var(--text, #161412) 6%, transparent) 0 calc(var(--bind) - 1px), color-mix(in srgb, var(--text, #161412) 26%, transparent) calc(var(--bind) - 1px) var(--bind), transparent var(--bind)), var(--leaf, rgb(247 242 230 / 0.772)); color: var(--text, #161412); border-radius: 3px 10px 10px 3px; box-shadow: 3px 3px 0 var(--shadow, rgb(22 20 18 / 0.3)), inset 1.5px 1.5px 0 var(--edge, rgb(255 255 255 / 0.7)); font: 400 17px/26px \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; } .ds-leaf::before, .ds-leaf::after { content: \"\"; position: absolute; left: calc((var(--bind) - 16px) / 2); width: 16px; height: 16px; border-radius: 50%; background: var(--board, #f3c01f); box-shadow: inset 0 0 0 1.5px rgb(0 0 0 / 0.32), inset 1px 2px 2px rgb(0 0 0 / 0.45); } .ds-leaf::before { top: clamp(14px, 18%, 140px); } .ds-leaf::after { bottom: clamp(14px, 18%, 140px); } .ds-leaf-title { margin: 0 0 10px; font: 760 17px/1.15 \"Archivo\", \"Univers Condensed\", \"Helvetica Neue\", \"Arial Narrow\", sans-serif; font-stretch: 72%; letter-spacing: 0.08em; } .ds-leaf p { margin: 0 0 10px; } .ds-leaf p:last-child { margin: 0; } .ds-mono { font: 500 14px/1.2 ui-monospace, \"SF Mono\", \"Cascadia Mono\", Menlo, Consolas, monospace; }"
+    },
+    {
+      "name": "Errata and Note Slips",
+      "kind": "custom",
+      "refersTo": "errata-slip",
+      "description": "Pasted-in slips with a hard cut shadow: vermilion errata (-0.7deg) for problems, bordered leaf-solid note (+0.5deg) for neutral notices.",
+      "html": "<div class=\"ds-surface\"><p class=\"ds-errata\" role=\"alert\"><strong>Problem. </strong>watches.json isn't valid JSON. The watcher stops until it's fixed on GitHub.</p><p class=\"ds-note\" role=\"status\">Saved. The watcher picks it up on its next check.</p></div>",
+      "css": ".ds-surface { padding: 16px; background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); } .ds-errata, .ds-note { margin: 4px 0 12px; max-width: 62ch; padding: 10px 14px; border-radius: 2px; box-shadow: 2px 2px 0 var(--shadow, rgb(22 20 18 / 0.3)); font: 400 17px/26px \"Sabon\", \"Iowan Old Style\", \"Palatino Linotype\", Palatino, \"Book Antiqua\", Charter, \"Sitka Text\", Georgia, serif; } .ds-errata { background: var(--vermilion, #c4311a); color: var(--on-vermilion, #fff8ee); transform: rotate(-0.7deg); } .ds-note { background: var(--leaf-solid, #f6e7b9); color: var(--text, #161412); border: 1.5px solid var(--text, #161412); transform: rotate(0.5deg); }"
+    }
+  ],
+  "narrative": {
+    "northStar": "The Reference Manual, Open at a Tab",
+    "overview": "VOX Watcher is a one-person control room, and it is drawn as a printed reference manual lying open at one of its divisions. The open division's board, a full-strength coloured divider card, floods the whole page. Content sits on it as milk-acetate leaves hinged on two punched holes, each casting a hard, unblurred cut shadow. Divider tabs step down the right-hand fore edge, one per section, and the open one is cut from the board itself. Everything is set in print ink: condensed bold capitals for heads, a book serif at a single reading size for text, monospace for times. The system refuses the category default for monitoring tools, a dark dashboard of poster tiles and metric cards. Numbers appear as manual content (a list of bookable times, a ledger, a bar chart in ink), never as big-number tiles.\n\nThe material does the state work. A bookable showtime is a filled, raised chip in the section's hue. Something listed but not yet bookable lies face-down: hatched, dashed or ruled, muted, with no shadow. A selected option is a punched hole that shows the board through the sheet. A leaf that is saving hangs half-turned on its hinge. A problem is a vermilion errata slip pasted in at a slight angle. Motion is mechanical: a two-frame hinge, never an eased curve.\n\nDensity is that of a manual page, not a cockpit: one column of generous leaves on a phone, dealt into two and then four columns on wider screens, with a 17px/26px reading line throughout. Colour is never picked by eye at runtime. The board, the leaf's opacity and every text colour on a coloured surface are computed from the six section hues so that contrast holds on every board, day and night.",
+    "keyCharacteristics": [
+      "Six full-strength divider boards, one per section. Only the open board floods the page; the other hues live on their tabs.",
+      "Milk-acetate leaves whose opacity is solved per board, with a binding strip, two punched holes, a sheen and a hard 3px cut shadow.",
+      "A stepped tab rail on the right edge, with each tab's length following how much its division holds.",
+      "One reading size (17/26). Hierarchy comes from face, width, weight and case.",
+      "Physical states: filled (bookable), face-down hatch (unavailable), punched hole (selected), half-hinged (pending), vermilion slip (error).",
+      "Hard offset shadows only, a two-frame 90ms hinge, and no motion at all under reduced motion."
+    ],
+    "rules": [
+      {
+        "name": "The One Board Rule",
+        "body": "The open section's colour floods the entire page, including the `theme-color` meta. Every other section's hue appears only on its own tab. Two boards are never open at once.",
+        "section": "colors"
+      },
+      {
+        "name": "The Solved Acetate Rule",
+        "body": "Leaf opacity is never chosen by hand. It is the least opacity at which the leaf composited over the board reaches a fixed luminance: at least 0.80 by day (paper) and at most 0.02 at night (smoke). Text contrast is therefore identical on every board.",
+        "section": "colors"
+      },
+      {
+        "name": "The Ink-or-Paper Rule",
+        "body": "Text on any coloured surface is picked by computed contrast, not by taste: ink or paper on day boards and hues, ivory or ink on night boards.",
+        "section": "colors"
+      },
+      {
+        "name": "The Errata Rule",
+        "body": "Vermilion means wrong or destructive. It is never a section colour, never decoration and never emphasis.",
+        "section": "colors"
+      },
+      {
+        "name": "The One Reading Size Rule",
+        "body": "Everything read as text is 17px on a 26px line. Hierarchy comes from face, width, weight and case, never from a ladder of sizes. The only other sizes are the display board title, 14px mono labels, 15px tab labels on phones, and the 20px refresh glyph.",
+        "section": "typography"
+      },
+      {
+        "name": "The Mono Means Machine Rule",
+        "body": "Monospace is for times, timestamps, axes and the watcher's own status. Prose is never set in mono.",
+        "section": "typography"
+      },
+      {
+        "name": "The Condensed Caps Rule",
+        "body": "Every all-caps head is Archivo at reduced width (64–76%) with positive tracking (0.06–0.12em). The display title alone tracks slightly negative.",
+        "section": "typography"
+      },
+      {
+        "name": "The Fore-Edge Rule",
+        "body": "Section navigation is always the tab rail down the right edge, at every width. There is never a top bar menu and never a bottom tab bar.",
+        "section": "layout"
+      },
+      {
+        "name": "The Dealing Rule",
+        "body": "Leaves deal into 1, 2 or 4 columns at the 720px and 1200px breakpoints. A wide leaf takes the full row at 2 columns and half the row at 4.",
+        "section": "layout"
+      },
+      {
+        "name": "The Hard Cut Rule",
+        "body": "Outer shadows are unblurred offsets: 3px for leaves, 2px for everything that sits on a leaf or the rail. Blur is only allowed inside a punched hole.",
+        "section": "elevation"
+      },
+      {
+        "name": "The Face-Down Rule",
+        "body": "Anything unavailable lies face-down: a 135° hatch (lines every 7px), a dashed or hairline-rule edge, muted text and no shadow. Disabled buttons, not-yet-bookable times, sold-out times (struck through as well) and paused watches all use it.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** derive every section's board, leaf opacity and text colours from its single hue through the palette computation. Light leaves must reach luminance ≥ 0.80, dark leaves ≤ 0.02, and night boards must be OKLCH lightness 0.45 (0.66 for hues at L ≥ 0.78) at maximum in-gamut chroma.",
+      "**Do** pick text on any coloured surface by measured contrast: ink or paper by day, ivory or ink on night boards.",
+      "**Do** keep tabs, primary buttons and bookable chips at full-strength hue in both modes. Only the open board darkens at night.",
+      "**Do** put the bookable showtime and its BOOK button first, filled and raised. Everything unavailable lies face-down with a hatch.",
+      "**Do** keep every filled control's 1.5px ink border. Chrome yellow on a day leaf is only 1.4:1, so the border, not the fill, defines the edge.",
+      "**Do** set all reading text at 17/26 and build hierarchy from Archivo condensed caps (width 64–76%), the serif and mono.",
+      "**Do** use hard offset shadows (3px for leaves, 2px for everything else) and keep blur inside punched holes.",
+      "**Do** animate only as a two-frame 90ms hinge, and gate every animation behind `prefers-reduced-motion: no-preference`.",
+      "**Do** keep touch targets at 44px or more (48px for buttons and inputs, 40px only for small inline buttons) and show focus as a 3px current-colour outline.",
+      "**Do** set per-section colours at runtime as custom properties through the CSSOM (`style.setProperty`). Ship textures as `data:` SVG in the stylesheet and fonts from the site itself."
+    ],
+    "donts": [
+      "**Don't** build a dark dashboard of poster tiles and metric cards. Numbers live in lists, ledgers and ink bar charts on leaves.",
+      "**Don't** use vermilion for anything except errors and armed destructive actions, and never use it as a section hue.",
+      "**Don't** hand-pick a leaf opacity or a \"dark version\" of a hue by mixing toward black. Mixing turns chrome yellow olive.",
+      "**Don't** introduce a second reading size, a heading-size ladder or mono prose.",
+      "**Don't** use blurred or ambient drop shadows, glows, or eased or springy transitions.",
+      "**Don't** make pill-shaped buttons or chips. Circles belong to punch holes, the status dot and the refresh control.",
+      "**Don't** put a punch hole on anything that isn't selectable. State tags stay tags.",
+      "**Don't** move section navigation off the right-edge tab rail into a top bar or bottom tab bar.",
+      "**Don't** write `style=\"\"` attributes or `<style>` blocks into the HTML (the CSP is `style-src 'self'`), and don't load fonts or assets from third-party CDNs.",
+      "**Don't** use VOX Cinemas' logo or brand assets. VOX Watcher is a personal tool with its own identity."
+    ]
+  }
+}
