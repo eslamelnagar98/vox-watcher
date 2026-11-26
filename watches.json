@@ -15,7 +15,7 @@
       "dates": { "from": "2026-12-16", "to": "2027-01-15" },
       "daysOfWeek": [],
       "experiences": [],
-      "time": { "after": "12:00", "before": "23:59" },
+      "time": { "after": "23:00" },
       "alerts": { "bookingOpened": true, "seatsReturned": true, "newShowtimes": true, "soldOut": false }
     },
     {
