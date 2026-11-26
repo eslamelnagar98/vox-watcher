@@ -1,32 +1,64 @@
 {
-  // VOX country site. Egypt: https://egy.voxcinemas.com
   "site": "https://egy.voxcinemas.com",
   "timeZone": "Africa/Cairo",
-
-  // true = push when ANY new movie is added to the site
   "announceNewMovies": false,
-
   "watches": [
     {
       "name": "Doomsday at Almaza",
       "enabled": true,
-      "cinemas": ["city-centre-almaza"],
-      "movies": ["avengers-doomsday"],
-      "dates": { "from": "2026-12-24", "to": "2027-01-15" },
+      "cinemas": [
+        "city-centre-almaza"
+      ],
+      "movies": [
+        "avengers-doomsday"
+      ],
+      "dates": {
+        "from": "2026-12-24",
+        "to": "2027-01-15"
+      },
       "daysOfWeek": [],
       "experiences": [],
-      "time": { "after": "12:00", "before": "23:59" },
-      "alerts": { "bookingOpened": true, "seatsReturned": true, "newShowtimes": true, "soldOut": false }
+      "time": {
+        "after": "12:00",
+        "before": "23:59"
+      },
+      "alerts": {
+        "bookingOpened": true,
+        "seatsReturned": true,
+        "newShowtimes": true,
+        "soldOut": false
+      }
     },
     {
       "name": "Dune IMAX weekend evenings (example)",
-      "enabled": false,
-      "cinemas": ["mall-of-egypt", "city-centre-almaza"],
-      "movies": ["dune-part-three"],
-      "dates": { "from": "2026-12-17" },
-      "daysOfWeek": ["Thu", "Fri", "Sat"],
-      "experiences": ["IMAX"],
-      "time": { "after": "18:00" }
+      "enabled": true,
+      "cinemas": [
+        "mall-of-egypt",
+        "city-centre-almaza"
+      ],
+      "movies": [
+        "dune-part-three"
+      ],
+      "dates": {
+        "from": "2026-12-17"
+      },
+      "daysOfWeek": [
+        "Thu",
+        "Fri",
+        "Sat"
+      ],
+      "experiences": [
+        "IMAX"
+      ],
+      "time": {
+        "after": "18:00"
+      },
+      "alerts": {
+        "bookingOpened": true,
+        "seatsReturned": true,
+        "newShowtimes": true,
+        "soldOut": false
+      }
     }
   ]
 }
