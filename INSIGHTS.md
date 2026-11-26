@@ -6,23 +6,26 @@ This file is rebuilt by the watcher. Times are in Africa/Cairo.
 
 | Watch | Dates listed | Showtimes | Bookable now | Listed, not bookable |
 |---|---|---|---|---|
-| Doomsday at Almaza | none | 72 | 13 | 59 |
-| Dune IMAX weekend evenings | none | 0 | 0 | 0 |
+| Doomsday at Almaza | 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec | 72 | 12 | 60 |
+| Dune IMAX weekend evenings | 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec | 14 | 14 | 0 |
 
 ## When does VOX open bookings?
 
-**Most common:** Thursdays, between 15:00 and 15:59 (1 of 1 openings).
+**Most common:** Thursdays, between 15:00 and 20:59 (2 of 2 openings).
 
 Note: the watcher checks about every 2 minutes (up to about 8 between runs), so each time is accurate to a few minutes.
 
 | Day | Openings |
 |---|---|
-| Thursday | 1 |
+| Thursday | 2 |
 
 | Detected at | Movie | Showtimes opened | For dates |
 |---|---|---|---|
+| Thu 26 Nov 2026 20:29 | Dune: Part Three | 14 | 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec |
 | Thu 26 Nov 2026 15:50 | Avengers: Doomsday | 2 | 16 Dec, 19 Dec |
 
 ## How fast do showtimes sell out?
 
-No sell-outs recorded yet.
+| Experience | Sell-outs | Median minutes bookable | Fastest |
+|---|---|---|---|
+| Standard | 1 | 280 | 280 |
