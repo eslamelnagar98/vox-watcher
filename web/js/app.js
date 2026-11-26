@@ -338,7 +338,7 @@ function healthLines() {
   const hs = health();
   const lines = [];
   if (hs.active) lines.push(h("p", null, h("strong", null, "Checking VOX right now. "), hs.lastOk ? `The last check finished ${M.ago(hs.lastOk.updated_at)}.` : ""));
-  else if (hs.lastOk) lines.push(h("p", null, h("strong", null, `Last checked ${M.ago(hs.lastOk.updated_at)}. `), "Checks run about every 5 minutes, three times per run."));
+  else if (hs.lastOk) lines.push(h("p", null, h("strong", null, `Last checked ${M.ago(hs.lastOk.updated_at)}. `), "Checks run about every 5 minutes, twice per run."));
   else if (app.runs) lines.push(h("p", null, "The watcher hasn't finished a check yet."));
   if (hs.failures > 0) lines.push(slip({ kind: "error", text: `The last ${hs.failures === 1 ? "check" : `${hs.failures} checks`} couldn't read VOX: ${hs.lastError ?? "no details"}` }));
   if (hs.runFailed) lines.push(slip({ kind: "error", text: "The latest run failed on GitHub.", href: githubLink(hs.lastFinished.html_url), linkText: "Open the run" }));
