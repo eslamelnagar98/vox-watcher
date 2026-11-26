@@ -17,7 +17,8 @@ public sealed class WatchRunner(
 {
     private const int HealthAlertAfterFailures = 3;
 
-    private readonly DateOnly _today = DateOnly.FromDateTime(TimeZoneInfo.ConvertTime(now, tz).DateTime);
+    private readonly DateTime _nowLocal = TimeZoneInfo.ConvertTime(now, tz).DateTime;
+    private DateOnly Today => DateOnly.FromDateTime(_nowLocal);
     private List<CatalogItem> _cinemas = [];
     private List<CatalogItem> _movies = [];
 
@@ -46,7 +47,7 @@ public sealed class WatchRunner(
 
         store.AppendEvents(log);
         store.Save(state);
-        store.WriteText("INSIGHTS.md", InsightsWriter.Build(state, config, tz, _today));
+        store.WriteText("INSIGHTS.md", InsightsWriter.Build(state, config, tz, Today));
     }
 
     public async Task PrintCatalogAsync(CancellationToken ct)
@@ -99,12 +100,13 @@ public sealed class WatchRunner(
         if (!first.LooksValid)
             throw new VoxSiteException($"[{watch.Name}] The showtimes page did not look right. VOX may have changed the layout.");
 
-        var datesInScope = first.Dates.Where(d => d >= _today && watch.MatchesDate(d)).ToList();
+        var datesInScope = first.Dates.Where(d => d >= Today && watch.MatchesDate(d)).ToList();
         var showtimes = new List<Showtime>();
 
         foreach (var date in datesInScope)
         {
             var page = date == first.PageDate ? first : await FetchAsync(VoxUrls.Showtimes(config.Site, watch.Cinemas, watch.Movies, date), ct);
+            if (!ReferenceEquals(page, first)) EnsureTrustworthy(page, date, watch);
             showtimes.AddRange(page.Showtimes.Where(s => InScope(watch, s)));
         }
 
@@ -115,7 +117,7 @@ public sealed class WatchRunner(
         watchState ??= new WatchState();
         state.Watches[watch.Key] = watchState;
 
-        var changes = ChangeDetector.Detect(watchState, datesInScope, datesInScope, showtimes, now, _today, state.SellOuts);
+        var changes = ChangeDetector.Detect(watchState, datesInScope, datesInScope, showtimes, now, _nowLocal, state.SellOuts);
         string Url(DateOnly? d) => VoxUrls.Showtimes(config.Site, watch.Cinemas, watch.Movies, d).ToString();
 
         if (isNew)
@@ -139,6 +141,20 @@ public sealed class WatchRunner(
 
         foreach (var n in MessageComposer.Compose(watch, changes, Url))
             await notifier.SendAsync(n, ct);
+    }
+
+    /// <summary>
+    /// A glitchy date page must never reach the detector. If it did, its showtimes would be
+    /// dropped from state and announced again as new (or BOOK NOW) on the next good run.
+    /// </summary>
+    private static void EnsureTrustworthy(ShowtimesPage page, DateOnly requested, WatchDefinition watch)
+    {
+        if (!page.LooksValid)
+            throw new VoxSiteException($"[{watch.Name}] The page for {requested:ddd dd MMM} did not look like a VOX showtimes page.");
+        if (page.PageDate != requested)
+            throw new VoxSiteException($"[{watch.Name}] Asked for {requested:dd MMM} but the page is for {page.PageDate:dd MMM}.");
+        if (page.Showtimes.Count == 0 && !page.HasNoShowtimesMessage)
+            throw new VoxSiteException($"[{watch.Name}] The page for {requested:ddd dd MMM} had no showtimes and no 'no showtimes' message.");
     }
 
     private bool InScope(WatchDefinition watch, Showtime s)
@@ -168,7 +184,7 @@ public sealed class WatchRunner(
     private async Task<ShowtimesPage> FetchAsync(Uri url, CancellationToken ct)
     {
         var html = await source.GetAsync(url, ct);
-        return ShowtimesParser.Parse(html, url, _today);
+        return ShowtimesParser.Parse(html, url, Today);
     }
 
     private async Task RecordFailureAsync(WatcherState state, string error, CancellationToken ct)

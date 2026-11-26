@@ -2,7 +2,7 @@ name: VOX watcher
 
 on:
   schedule:
-    - cron: "*/5 * * * *"        # every 5 minutes (GitHub can start it a few minutes late)
+    - cron: "*/5 * * * *"        # every 5 minutes (GitHub often starts it 10 to 20 minutes late)
   push:
     branches: [main]
     paths: ["watches.json", "src/**"]   # run right away when you change your watches
@@ -23,12 +23,17 @@ concurrency:
 
 jobs:
   watch:
-    runs-on: ubuntu-latest
-    timeout-minutes: 8
+    # ubuntu-24.04, not ubuntu-latest: Google Chrome is preinstalled and Playwright supports it.
+    runs-on: ubuntu-24.04
+    timeout-minutes: 12
     env:
       DOTNET_NOLOGO: true
       DOTNET_CLI_TELEMETRY_OPTOUT: true
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+      # Probe result on GitHub runners: plain HTTP and Playwright's bundled Chromium are rejected by VOX's CDN,
+      # the installed Google Chrome gets 200. So: real browser, Chrome channel.
+      VOX_FETCHER: browser
+      VOX_BROWSER_CHANNEL: chrome
     steps:
       - uses: actions/checkout@v4
 
@@ -39,16 +44,29 @@ jobs:
       - name: Build
         run: dotnet build src/VoxWatcher -c Release -nologo -v q
 
+      - name: Check browser
+        run: |
+          # Chrome is preinstalled on ubuntu-24.04 runners. Install it only if an image ever lacks it.
+          google-chrome --version || pwsh src/VoxWatcher/bin/Release/net10.0/playwright.ps1 install --with-deps chrome
+
       - name: Run (${{ inputs.mode || 'watch' }})
         env:
           NTFY_TOPIC: ${{ secrets.NTFY_TOPIC }}
           NTFY_TOKEN: ${{ secrets.NTFY_TOKEN }}
           NTFY_SERVER: ${{ vars.NTFY_SERVER }}
-        run: dotnet run --project src/VoxWatcher -c Release --no-build -- ${{ inputs.mode || 'watch' }}
+        run: |
+          MODE="${{ inputs.mode || 'watch' }}"
+          if [ "$MODE" = "watch" ]; then
+            # Check about 4 times per job (every 60 to 75 s), because the schedule itself is unreliable.
+            dotnet run --project src/VoxWatcher -c Release --no-build -- watch --loop-seconds 240 --interval-seconds 60
+          else
+            dotnet run --project src/VoxWatcher -c Release --no-build -- "$MODE"
+          fi
 
       - name: Save state
         if: always()
         run: |
+          if [ ! -d state ]; then echo "No state folder yet. Nothing to save."; exit 0; fi
           git config user.name "vox-bot"
           git config user.email "vox-bot@users.noreply.github.com"
           git add state
