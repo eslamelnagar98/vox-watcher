@@ -320,11 +320,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-19",
           "Time": "23:00:00",
-          "Bookable": false,
+          "Bookable": true,
           "EverBookable": true,
           "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
-          "OpenedAt": "2026-11-27T00:27:58.1774289+00:00",
-          "SoldOutAt": "2026-11-27T03:02:58.3042756+00:00"
+          "OpenedAt": "2026-11-27T00:27:58.1774289+00:00"
         },
         "0047-276924": {
           "Movie": "Avengers: Doomsday",
