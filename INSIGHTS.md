@@ -34,4 +34,4 @@ Note: the watcher checks about every 2 to 3 minutes, so each time is accurate to
 | Experience | Sell-outs | Median minutes bookable | Fastest |
 |---|---|---|---|
 | Standard | 38 | 590 | 50 |
-| GOLD | 76 | 775 | 17 |
+| GOLD | 77 | 785 | 17 |
