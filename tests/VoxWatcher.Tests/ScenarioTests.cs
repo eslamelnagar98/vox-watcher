@@ -1,3 +1,5 @@
+using VoxWatcher.Notifications;
+
 namespace VoxWatcher.Tests;
 
 /// <summary>End-to-end runs of the watcher against a fake VOX site, step by step, with real state between runs.</summary>
@@ -68,6 +70,46 @@ public sealed class ScenarioTests : IDisposable
         var sent = await _s.RunAsync(Gold715Open, "2026-11-30T13:20:00Z");
 
         Assert.Equal("Seats are back: Avengers: Doomsday", Assert.Single(sent).Title);
+    }
+
+    [Fact]
+    public async Task Seats_flickering_on_a_full_show_push_only_once_per_three_hours()
+    {
+        await _s.RunAsync(Normal, Baseline);
+        await _s.RunAsync(Gold715Open, BookingOpens);
+        await _s.RunAsync(Gold715Closed, "2026-11-30T09:47:00Z");
+        Assert.Single(await _s.RunAsync(Gold715Open, "2026-11-30T13:20:00Z"));
+
+        await _s.RunAsync(Gold715Closed, "2026-11-30T13:30:00Z");
+        Assert.Empty(await _s.RunAsync(Gold715Open, "2026-11-30T13:40:00Z"));
+        Assert.Equal(2, _s.Events.Count(l => l.Contains("| SeatsReturned |"))); // every flicker is still logged
+
+        await _s.RunAsync(Gold715Closed, "2026-11-30T15:00:00Z");
+        Assert.Single(await _s.RunAsync(Gold715Open, "2026-11-30T16:25:00Z"));
+    }
+
+    [Fact]
+    public async Task A_refused_push_does_not_crash_the_run_and_is_sent_on_the_next_run()
+    {
+        await _s.RunAsync(Normal, Baseline);
+
+        var refusing = new RefusingNotifier();
+        await _s.RunAsync(Gold715Open, BookingOpens, refusing);
+
+        Assert.Equal("BOOK NOW: Avengers: Doomsday", Assert.Single(_s.State.PendingAlerts).Title);
+        Assert.Contains(_s.Events, l => l.Contains("| BookingOpened |")); // the run saved its state
+
+        var sent = await _s.RunAsync(Gold715Open, "2026-11-30T09:10:00Z");
+
+        Assert.Equal("BOOK NOW: Avengers: Doomsday", Assert.Single(sent).Title); // resent once, not detected again
+        Assert.Equal("https://egy.voxcinemas.com/booking/0047-276906", sent[0].Click);
+        Assert.Empty(_s.State.PendingAlerts);
+    }
+
+    private sealed class RefusingNotifier : INotifier
+    {
+        public Task SendAsync(Notification n, CancellationToken ct) =>
+            throw new HttpRequestException("Response status code does not indicate success: 429 (Too Many Requests).");
     }
 
     [Theory]

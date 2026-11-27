@@ -85,6 +85,25 @@ public static class ChangeDetector
         return changes;
     }
 
+    /// <summary>
+    /// Seats on a nearly full show flicker: carts hold seats for a few minutes, then release them.
+    /// Every flicker is still logged, but only one "seats are back" push per show goes out per cooldown.
+    /// </summary>
+    public static List<Change> ThrottleSeatsReturned(WatchState state, IReadOnlyList<Change> changes, DateTimeOffset now, TimeSpan cooldown)
+    {
+        var result = new List<Change>();
+        foreach (var c in changes)
+        {
+            if (c.Kind == ChangeKind.SeatsReturned && c.Showtime is { } s && state.Sessions.TryGetValue(s.Id, out var session))
+            {
+                if (session.SeatsAlertedAt is { } last && now - last < cooldown) continue;
+                session.SeatsAlertedAt = now;
+            }
+            result.Add(c);
+        }
+        return result;
+    }
+
     /// <summary>Start time (local, e.g. Cairo) is at or before now.</summary>
     internal static bool HasStarted(Showtime s, DateTime nowLocal)
     {

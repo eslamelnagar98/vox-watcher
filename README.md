@@ -42,7 +42,7 @@ It runs by itself on GitHub Actions and checks VOX about every 2 minutes. No lap
 | Alert | When | Priority |
 |---|---|---|
 | **BOOK NOW: Avengers: Doomsday** | A showtime that matches your watch became bookable | Urgent (5), loud |
-| **Seats are back: ...** | A session that sold out is bookable again | Urgent (5) |
+| **Seats are back: ...** | A session that sold out is bookable again (at most once per show every 3 hours, because seats on a full show flicker as carts hold and release them) | Urgent (5) |
 | **New showtimes: ...** | New dates or times are listed but not bookable yet | Normal (3) |
 | **Sold out: ...** | A bookable session sold out. Off by default | Low (2) |
 | **New on VOX: ...** | A movie you are watching appears on the site for the first time | High (4) |
@@ -256,7 +256,9 @@ Deleting `state.json` on the `state` branch makes the next run a fresh, silent b
 
 Use it to be ready at that time, with the app open, logged in, and your card saved.
 
-Note: a crossed-out time on the VOX site can mean "sales not open yet" or "sold out". The watcher treats both the same way: the moment it becomes clickable, you get an alert. If the watcher saw it bookable before, the alert says **Seats are back**.
+Note: a crossed-out time on the VOX site can mean "sales not open yet" or "sold out". The watcher treats both the same way: the moment it becomes clickable, you get an alert. If the watcher saw it bookable before, the alert says **Seats are back**. On a nearly full show, seats flicker as other people's carts hold and release them, so each show gets at most one "Seats are back" push every 3 hours (every flicker is still logged).
+
+If ntfy refuses a push (for example "too many requests"), the run does not fail: the push is kept and sent at the start of the next run.
 
 ---
 
@@ -325,7 +327,7 @@ The tests never touch the network or a browser, and never read your `watches.jso
 |---|---|
 | `ParserTests.cs` | Real pages captured from egy.voxcinemas.com: date tabs, bookable vs crossed-out times, booking links, the "no showtimes" page, the cinema and movie catalog |
 | `ChangeDetectorTests.cs` | Listed, opened, sold out, seats back; a show that already started is not a sell-out, including after-midnight shows |
-| `ScenarioTests.cs` | The whole watcher, run after run, against a fake VOX site: first-run summary, BOOK NOW, sell-out, seats back, a broken page (no alert, nothing lost, no repeat alerts later), the 15-minute problem alert and recovery |
+| `ScenarioTests.cs` | The whole watcher, run after run, against a fake VOX site: first-run summary, BOOK NOW, sell-out, seats back, flickering seats (one push per 3 hours), a refused push (kept and resent), a broken page (no alert, nothing lost, no repeat alerts later), the 15-minute problem alert and recovery |
 
 `.github/workflows/ci.yml` runs the tests on every pull request and on code changes to `main`. It is separate from the watcher, so a failing test never stops your alerts.
 

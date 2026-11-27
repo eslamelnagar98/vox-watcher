@@ -130,15 +130,15 @@ internal sealed class Scenario : IDisposable
 
     public string ReadStateFile(string name) => File.ReadAllText(Path.Combine(_stateDir, name));
 
-    /// <summary>One check at the given UTC time. Returns the notifications it sent.</summary>
-    public async Task<List<Notification>> RunAsync(IHtmlSource site, string utc)
+    /// <summary>One check at the given UTC time. Returns the notifications it sent (none if <paramref name="notifier"/> replaces the recorder).</summary>
+    public async Task<List<Notification>> RunAsync(IHtmlSource site, string utc, INotifier? notifier = null)
     {
         // Messages format dates with the current culture, as in production (Program.cs sets invariant).
         CultureInfo.CurrentCulture = CultureInfo.InvariantCulture;
 
         var before = _notifier.Sent.Count;
         var now = DateTimeOffset.Parse(utc, CultureInfo.InvariantCulture);
-        await new WatchRunner(Config, site, _notifier, Store, Cairo, now).RunAsync(TestContext.Current.CancellationToken);
+        await new WatchRunner(Config, site, notifier ?? _notifier, Store, Cairo, now).RunAsync(TestContext.Current.CancellationToken);
         return [.. _notifier.Sent.Skip(before)];
     }
 

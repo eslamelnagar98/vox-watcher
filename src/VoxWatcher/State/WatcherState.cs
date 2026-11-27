@@ -1,5 +1,6 @@
 using System.Text.Json;
 using VoxWatcher.Configuration;
+using VoxWatcher.Notifications;
 
 namespace VoxWatcher.State;
 
@@ -18,6 +19,9 @@ public sealed class WatcherState
 
     /// <summary>How long sessions stayed bookable before selling out.</summary>
     public List<SellOutRecord> SellOuts { get; set; } = [];
+
+    /// <summary>Pushes ntfy refused (for example "too many requests"). Sent again at the start of the next run.</summary>
+    public List<Notification> PendingAlerts { get; set; } = [];
 }
 
 public sealed class WatchState
@@ -38,6 +42,9 @@ public sealed class SessionState
     public DateTimeOffset FirstSeen { get; set; }
     public DateTimeOffset? OpenedAt { get; set; }
     public DateTimeOffset? SoldOutAt { get; set; }
+
+    /// <summary>Last "seats are back" push for this show. Used to hold back repeats while seats flicker.</summary>
+    public DateTimeOffset? SeatsAlertedAt { get; set; }
 }
 
 public sealed class HealthState
