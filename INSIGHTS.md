@@ -6,7 +6,7 @@ This file is rebuilt by the watcher. Times are in Africa/Cairo.
 
 | Watch | Dates listed | Showtimes | Bookable now | Listed, not bookable |
 |---|---|---|---|---|
-| Doomsday at Almaza | 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec | 72 | 28 | 44 |
+| Doomsday at Almaza | 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec | 72 | 25 | 47 |
 | Dune IMAX weekend evenings | 17 Dec, 18 Dec, 19 Dec, 20 Dec, 21 Dec, 22 Dec, 23 Dec | 21 | 21 | 0 |
 
 ## When does VOX open bookings?
@@ -34,4 +34,4 @@ Note: the watcher checks about every 2 to 3 minutes, so each time is accurate to
 | Experience | Sell-outs | Median minutes bookable | Fastest |
 |---|---|---|---|
 | Standard | 35 | 570 | 50 |
-| GOLD | 53 | 653 | 17 |
+| GOLD | 56 | 664 | 17 |
