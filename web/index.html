@@ -3,47 +3,29 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; font-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; manifest-src 'self'; base-uri 'none'; form-action 'none'">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self' https://api.github.com https://raw.githubusercontent.com; manifest-src 'self'; base-uri 'none'; form-action 'none'">
   <meta name="referrer" content="no-referrer">
   <!-- Used only off GitHub Pages (local preview). On Pages the repository comes from the address. -->
   <meta name="vox-repo" content="eslamelnagar98/vox-watcher">
-  <meta name="theme-color" content="#f3c01f">
+  <meta name="theme-color" content="#f6f7f9" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0f1115" media="(prefers-color-scheme: dark)">
   <meta name="color-scheme" content="light dark">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="apple-mobile-web-app-title" content="VOX Watcher">
-  <meta name="description" content="Control room for VOX Watcher: what can be booked, the watcher's health, your watches and what it has learned.">
+  <meta name="description" content="What you can book at VOX, the watcher's health, and your watches.">
   <title>VOX Watcher</title>
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="icon" href="icons/icon.svg" type="image/svg+xml">
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
-  <link rel="preload" href="fonts/archivo-latin.woff2" as="font" type="font/woff2" crossorigin>
   <link rel="stylesheet" href="styles.css">
   <script type="module" src="js/app.js"></script>
 </head>
 <body>
-  <!--
-    THESIS: The watcher's control room as a reference manual lying open at a tabbed section. It refuses
-    the category default: a dark dashboard of poster tiles and metric cards.
-    OWN-WORLD: Full-strength divider boards (chrome yellow, oxide orange, grass, teal, ultramarine,
-    violet); milk-acetate leaves with two punched holes and a hard cut shadow; print-ink type; vermilion
-    only for errata slips. Condensed bold caps heads, book serif text at one size, mono for times.
-    STORY: Open from an alert, see what can be booked and book it; confirm the watcher is alive; add or
-    change a watch without touching JSON.
-    FIRST VIEWPORT: Running head with freshness; the section name huge on its board; first leaf lists
-    bookable showtimes with BOOK buttons, else the watcher's status; stepped tab rail down the right edge.
-    FORM: Manual Tab Board (a dealt challenger, chosen over the assigned Projection Booth), seed 2d8427fb;
-    staging: stacked leaves, no dealt staging.
-  -->
-  <p class="spine" aria-hidden="true">VOX Watcher — reference manual — egy.voxcinemas.com</p>
-  <div class="book">
-    <div class="page">
-      <header class="running-head"></header>
-      <main id="main" tabindex="-1"></main>
-    </div>
-    <nav class="rail" aria-label="Sections"></nav>
-  </div>
+  <header class="app-bar"></header>
+  <nav class="tabbar" aria-label="Sections"></nav>
+  <main id="main" tabindex="-1"></main>
   <noscript><p class="noscript">VOX Watcher needs JavaScript to read the watcher's state from GitHub.</p></noscript>
 </body>
 </html>

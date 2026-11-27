@@ -14,7 +14,7 @@ export class GitHubError extends Error {
 /** What went wrong, in words that say how to fix it. */
 function explain(status, action, detail) {
   switch (status) {
-    case 401: return `GitHub refused the token while trying to ${action}. It may be mistyped or expired: make a new one in Setup.`;
+    case 401: return `GitHub refused the token while trying to ${action}. It may be mistyped or expired: make a new one in Settings.`;
     case 403: return `The token isn't allowed to ${action}. Give it "Contents: Read and write" and "Actions: Read and write" for this repository.`;
     case 404: return `GitHub couldn't find what's needed to ${action}. Check that the token has access to this repository.`;
     case 409:
@@ -55,7 +55,7 @@ export class GitHub {
       let detail = "";
       try { detail = (await res.json()).message ?? ""; } catch { /* not JSON */ }
       if (res.status === 403 && /rate limit/i.test(detail)) {
-        throw new GitHubError(403, "GitHub's limit for reading without a token is used up for this hour. Add your token in Setup, or wait a bit.");
+        throw new GitHubError(403, "GitHub's limit for reading without a token is used up for this hour. Add your token in Settings, or wait a bit.");
       }
       throw new GitHubError(res.status, explain(res.status, action, detail));
     }
