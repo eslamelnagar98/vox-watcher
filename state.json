@@ -348,9 +348,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-20",
           "Time": "22:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276931": {
           "Movie": "Avengers: Doomsday",
@@ -358,9 +359,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-20",
           "Time": "18:45:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276932": {
           "Movie": "Avengers: Doomsday",
@@ -368,9 +370,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-20",
           "Time": "15:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276933": {
           "Movie": "Avengers: Doomsday",
@@ -378,9 +381,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-20",
           "Time": "15:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276935": {
           "Movie": "Avengers: Doomsday",
@@ -388,9 +392,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-20",
           "Time": "23:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276936": {
           "Movie": "Avengers: Doomsday",
@@ -398,9 +403,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-20",
           "Time": "19:15:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276945": {
           "Movie": "Avengers: Doomsday",
@@ -408,9 +414,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-21",
           "Time": "22:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276946": {
           "Movie": "Avengers: Doomsday",
@@ -418,9 +425,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-21",
           "Time": "18:45:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276947": {
           "Movie": "Avengers: Doomsday",
@@ -428,9 +436,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-21",
           "Time": "15:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276948": {
           "Movie": "Avengers: Doomsday",
@@ -438,9 +447,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-21",
           "Time": "15:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276950": {
           "Movie": "Avengers: Doomsday",
@@ -448,9 +458,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-21",
           "Time": "23:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276951": {
           "Movie": "Avengers: Doomsday",
@@ -458,9 +469,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-21",
           "Time": "19:15:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276960": {
           "Movie": "Avengers: Doomsday",
@@ -468,9 +480,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-22",
           "Time": "22:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276961": {
           "Movie": "Avengers: Doomsday",
@@ -478,9 +491,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-22",
           "Time": "18:45:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276962": {
           "Movie": "Avengers: Doomsday",
@@ -488,9 +502,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-22",
           "Time": "15:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276963": {
           "Movie": "Avengers: Doomsday",
@@ -498,9 +513,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-22",
           "Time": "15:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276965": {
           "Movie": "Avengers: Doomsday",
@@ -508,9 +524,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-22",
           "Time": "23:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276966": {
           "Movie": "Avengers: Doomsday",
@@ -518,9 +535,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-22",
           "Time": "19:15:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276975": {
           "Movie": "Avengers: Doomsday",
@@ -528,9 +546,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-23",
           "Time": "22:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276976": {
           "Movie": "Avengers: Doomsday",
@@ -538,9 +557,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-23",
           "Time": "18:45:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276977": {
           "Movie": "Avengers: Doomsday",
@@ -548,9 +568,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-23",
           "Time": "15:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276978": {
           "Movie": "Avengers: Doomsday",
@@ -558,9 +579,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-23",
           "Time": "15:30:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276980": {
           "Movie": "Avengers: Doomsday",
@@ -568,9 +590,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-23",
           "Time": "23:00:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276981": {
           "Movie": "Avengers: Doomsday",
@@ -578,9 +601,10 @@
           "Experience": "GOLD",
           "Date": "2026-12-23",
           "Time": "19:15:00",
-          "Bookable": false,
-          "EverBookable": false,
-          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00"
+          "Bookable": true,
+          "EverBookable": true,
+          "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
+          "OpenedAt": "2026-11-27T00:20:36.0697174+00:00"
         },
         "0047-276993": {
           "Movie": "Avengers: Doomsday",
@@ -4371,6 +4395,18 @@
         "2026-12-17",
         "2026-12-18",
         "2026-12-19",
+        "2026-12-20",
+        "2026-12-21",
+        "2026-12-22",
+        "2026-12-23"
+      ]
+    },
+    {
+      "At": "2026-11-27T00:20:36.0697174+00:00",
+      "Watch": "Doomsday at Almaza",
+      "Movie": "Avengers: Doomsday",
+      "Sessions": 24,
+      "Dates": [
         "2026-12-20",
         "2026-12-21",
         "2026-12-22",
