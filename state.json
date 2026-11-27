@@ -4403,8 +4403,10 @@
     "you-can-see-everything"
   ],
   "Health": {
-    "ConsecutiveFailures": 0,
-    "Alerted": false
+    "ConsecutiveFailures": 2,
+    "FirstFailureAt": "2026-11-27T11:40:31.7291718+00:00",
+    "Alerted": false,
+    "LastError": "VOX answered 403  for /showtimes (browser)"
   },
   "Openings": [
     {
