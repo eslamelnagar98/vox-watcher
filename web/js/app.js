@@ -1,18 +1,43 @@
-// VOX Watcher web app: a reference manual lying open at a tabbed section.
+// VOX Watcher web app: a calm, simple control room for the watcher.
 // Reads watches.json (main) and state.json, catalog.json, events.log (state branch).
 // Writes go through the GitHub API with a fine-grained token stored only on this device.
 
 import * as M from "./model.js";
 import { GitHub, GitHubError } from "./github.js";
 
+// Five sections fit a phone's bottom bar. Old links to #insights and #log land on Activity.
 const SECTIONS = [
-  { id: "now", label: "Now", hue: "#f3c01f" },
-  { id: "showtimes", label: "Showtimes", hue: "#e8672a" },
-  { id: "watches", label: "Watches", hue: "#5b9b3a" },
-  { id: "insights", label: "Insights", hue: "#139e97" },
-  { id: "log", label: "Log", hue: "#2853b3" },
-  { id: "setup", label: "Setup", hue: "#7650bf" },
+  { id: "now", label: "Now", title: "Now", icon: "home" },
+  { id: "showtimes", label: "Showtimes", title: "Showtimes", icon: "film" },
+  { id: "watches", label: "Watches", title: "Watches", icon: "eye" },
+  { id: "activity", label: "Activity", title: "Activity", icon: "chart" },
+  { id: "setup", label: "Settings", title: "Settings", icon: "gear" },
 ];
+const ALIASES = { insights: "activity", log: "activity" };
+
+// Simple line icons, drawn as SVG elements (no inline HTML, so the CSP stays strict).
+const ICONS = {
+  home: ["M3 10.5 12 3l9 7.5", "M5 9.5V20h14V9.5", "M10 20v-6h4v6"],
+  film: ["M4 5h16v14H4z", "M8 5v14", "M16 5v14", "M4 9.5h4", "M4 14.5h4", "M16 9.5h4", "M16 14.5h4"],
+  eye: ["M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z", "M12 9a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"],
+  chart: ["M4 20V10", "M10 20V4", "M16 20v-7", "M22 20H2"],
+  gear: ["M12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z", "M19.4 15a1.6 1.6 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.6 1.6 0 0 0-2.7 1.1V21a2 2 0 1 1-4 0v-.1a1.6 1.6 0 0 0-2.7-1.1l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1A1.6 1.6 0 0 0 3.6 15H3a2 2 0 1 1 0-4h.1a1.6 1.6 0 0 0 1.1-2.7l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.6 1.6 0 0 0 2.7-1.1V3a2 2 0 1 1 4 0v.1a1.6 1.6 0 0 0 2.7 1.1l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.6 1.6 0 0 0 1.1 2.7H21a2 2 0 1 1 0 4h-.1a1.6 1.6 0 0 0-1.5 1.3z"],
+  refresh: ["M20 12a8 8 0 1 1-2.3-5.7", "M20 4v5h-5"],
+};
+
+function icon(name) {
+  const NS = "http://www.w3.org/2000/svg";
+  const svg = document.createElementNS(NS, "svg");
+  svg.setAttribute("viewBox", "0 0 24 24");
+  svg.setAttribute("aria-hidden", "true");
+  svg.setAttribute("class", "icon");
+  for (const d of ICONS[name] ?? []) {
+    const path = document.createElementNS(NS, "path");
+    path.setAttribute("d", d);
+    svg.append(path);
+  }
+  return svg;
+}
 
 const TOKEN_KEY = "vox-watcher.token";
 const WORKFLOW = "watch.yml";
@@ -70,7 +95,7 @@ function groupBy(list, keyOf) {
   return map;
 }
 
-const arrow = () => h("span", { class: "arrow", "aria-hidden": "true" }, "→");
+const arrow = () => null;
 const out = () => h("span", { class: "arrow", "aria-hidden": "true" }, "↗");
 
 function link(href, text, { external = false, cls = "" } = {}) {
@@ -163,31 +188,6 @@ async function load() {
   render();
 }
 
-// ---- Board and acetate ---------------------------------------------------------------------
-
-const darkQuery = matchMedia("(prefers-color-scheme: dark)");
-
-function applyBoard() {
-  const section = SECTIONS.find((s) => s.id === app.section) ?? SECTIONS[0];
-  const dark = darkQuery.matches;
-  const p = M.palette(section.hue, dark);
-  const root = document.documentElement.style;
-  root.setProperty("--board", M.rgbToHex(p.board));
-  root.setProperty("--hue", section.hue);
-  root.setProperty("--on-hue", M.rgbToHex(p.onHue));
-  root.setProperty("--on-board", M.rgbToHex(p.onBoard));
-  root.setProperty("--leaf", `rgb(${p.leaf.join(" ")} / ${p.alpha})`);
-  root.setProperty("--leaf-solid", M.rgbToHex(p.leafSolid));
-  root.setProperty("--text", M.rgbToHex(p.text));
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", M.rgbToHex(p.board));
-  // Tabs keep full-strength hue in both modes; only the open division's board darkens at night.
-  for (const s of SECTIONS) {
-    const tab = document.querySelector(`.tab[data-id="${s.id}"]`);
-    tab?.style.setProperty("--tab", s.hue);
-    tab?.style.setProperty("--on-tab", M.rgbToHex(M.palette(s.hue, false).onHue));
-  }
-}
-
 // ---- Derived facts -------------------------------------------------------------------------
 
 function allSessions() {
@@ -212,83 +212,71 @@ function health() {
 }
 
 function extents() {
-  const sessions = allSessions();
-  return {
-    now: sessions.filter((s) => s.bookable).length + 1,
-    showtimes: sessions.length,
-    watches: app.watches.length,
-    insights: (M.prop(app.state, "Openings") ?? []).length,
-    log: app.events.length,
-    setup: 1,
-  };
+  return { bookable: allSessions().filter((s) => s.bookable).length };
 }
 
 // ---- Rendering -----------------------------------------------------------------------------
 
-function render(turn = false) {
-  renderRail();
-  applyBoard();
+function render() {
+  renderTabs();
   renderHead();
   const main = document.getElementById("main");
   const section = SECTIONS.find((s) => s.id === app.section);
   const body = {
     now: renderNow, showtimes: renderShowtimes, watches: renderWatches,
-    insights: renderInsights, log: renderLog, setup: renderSetup,
+    activity: renderActivity, setup: renderSetup,
   }[app.section]();
   main.replaceChildren(...[
-    h("h1", { class: "board-title" }, section.label),
-    body.intro ? h("p", { class: "board-intro" }, body.intro) : null,
+    h("div", { class: "page-head" },
+      h("h1", { class: "page-title" }, section.title),
+      body.intro ? h("p", { class: "page-intro" }, body.intro) : null),
     app.notice ? slip(app.notice) : null,
-    sampleMode ? h("p", { class: "board-intro" }, "Sample data: a local preview, nothing here is live and nothing can be saved.") : null,
-    h("div", { class: "leaves" }, body.leaves),
+    sampleMode ? h("p", { class: "notice" }, "Sample data. This is a local preview: nothing here is live and nothing can be saved.") : null,
+    h("div", { class: "cards" }, body.leaves),
   ].filter(Boolean));
-  if (turn && !matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    main.classList.remove("turning");
-    void main.offsetWidth;
-    main.classList.add("turning");
-  }
 }
 
 function renderHead() {
-  const head = document.querySelector(".running-head");
+  const head = document.querySelector(".app-bar");
   if (!head) return;
   const hs = app.runs ? health() : null;
-  let status = "reading…";
+  let status = "Loading";
   let flag = "idle";
   if (hs && !app.loading) {
-    if (hs.active) { status = "checking now"; flag = "busy"; }
-    else if (hs.failures > 0 || hs.runFailed || hs.staleMin > STALE_MINUTES) { status = hs.lastOk ? `problem · ${agoShort(hs.lastOk.updated_at)}` : "problem"; flag = "bad"; }
-    else if (hs.lastOk) { status = `checked ${agoShort(hs.lastOk.updated_at)}`; flag = "ok"; }
-    else status = "no checks yet";
-  } else if (app.loading && app.loadedAt) status = "refreshing…";
+    if (hs.active) { status = "Checking now"; flag = "busy"; }
+    else if (hs.failures > 0 || hs.runFailed || hs.staleMin > STALE_MINUTES) { status = hs.lastOk ? `Needs attention · ${agoShort(hs.lastOk.updated_at)}` : "Needs attention"; flag = "bad"; }
+    else if (hs.lastOk) { status = `Checked ${agoShort(hs.lastOk.updated_at)}`; flag = "ok"; }
+    else status = "No checks yet";
+  } else if (app.loading && app.loadedAt) status = "Refreshing";
   head.replaceChildren(
-    h("a", { class: "brand", href: "#now" }, "VOX Watcher"),
-    h("p", { class: `freshness is-${flag}` }, h("span", { class: "dot", "aria-hidden": "true" }), status),
-    h("button", { class: "refresh", type: "button", "aria-label": "Refresh", disabled: app.loading, onclick: () => load() }, "↻"),
+    h("a", { class: "brand", href: "#now" }, h("span", { class: "brand-mark", "aria-hidden": "true" }), "VOX Watcher"),
+    h("div", { class: "head-right" },
+      h("p", { class: `status is-${flag}`, role: "status" }, h("span", { class: "dot", "aria-hidden": "true" }), status),
+      h("button", { class: "icon-btn", type: "button", "aria-label": "Refresh", title: "Refresh", disabled: app.loading, onclick: () => load() }, icon("refresh"))),
   );
 }
 
-function renderRail() {
-  const rail = document.querySelector(".rail");
+function renderTabs() {
+  const bar = document.querySelector(".tabbar");
   const ext = extents();
-  // Tab height follows how much each division holds, like a manual's divider tabs.
-  rail.replaceChildren(...SECTIONS.map((s) => h("a", {
-    class: "tab", href: `#${s.id}`, "data-id": s.id,
+  bar.replaceChildren(...SECTIONS.map((s) => h("a", {
+    class: "tab", href: `#${s.id}`,
     "aria-current": s.id === app.section ? "page" : null,
-    style: { "--grow": String(1 + Math.log2(1 + (ext[s.id] ?? 0))) },
-  }, h("span", null, s.label))));
+  }, icon(s.icon), h("span", { class: "tab-label" }, s.label),
+  s.id === "now" && ext.bookable ? h("span", { class: "tab-badge", "aria-label": `${ext.bookable} bookable` }, String(ext.bookable)) : null)));
 }
 
 function leaf(title, children, { wide = false, cls = "", id } = {}) {
-  const headingId = id ?? `leaf-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
-  return h("section", { class: `leaf${wide ? " leaf--wide" : ""}${cls ? " " + cls : ""}`, "aria-labelledby": headingId },
-    h("h2", { class: "leaf-title", id: headingId }, title),
+  const headingId = id ?? `card-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-")}`;
+  return h("section", { class: `card${cls ? " " + cls : ""}`, "aria-labelledby": headingId },
+    h("h2", { class: "card-title", id: headingId }, title),
     children);
 }
 
 function slip(notice) {
-  return h("p", { class: notice.kind === "error" ? "errata" : "note-slip", role: notice.kind === "error" ? "alert" : "status" },
-    notice.kind === "error" ? h("strong", null, "Problem. ") : null, notice.text,
+  const error = notice.kind === "error";
+  return h("p", { class: `notice ${error ? "notice--error" : "notice--ok"}`, role: error ? "alert" : "status" },
+    notice.text,
     notice.href ? [" ", link(notice.href, notice.linkText ?? "Open", { external: true })] : null);
 }
 
@@ -311,7 +299,7 @@ function renderNow() {
     loadErrors("watches", "state", "runs"),
     healthLines(),
     watching.length
-      ? h("ul", { class: "plain" }, watching.map((w) => h("li", null, h("strong", null, w.name), " — ", M.describeWatch(w, app.catalog))))
+      ? h("ul", { class: "plain" }, watching.map((w) => h("li", null, h("strong", null, w.name), ": ", M.describeWatch(w, app.catalog))))
       : h("p", null, "No watches are switched on. ", link("#watches", "Add one")),
     h("div", { class: "actions" },
       actionButton("check", "Check now", () => runWorkflow("watch")),
@@ -343,7 +331,7 @@ function healthLines() {
   if (hs.failures > 0) lines.push(slip({ kind: "error", text: `The last ${hs.failures === 1 ? "check" : `${hs.failures} checks`} couldn't read VOX: ${hs.lastError ?? "no details"}` }));
   if (hs.runFailed) lines.push(slip({ kind: "error", text: "The latest run failed on GitHub.", href: githubLink(hs.lastFinished.html_url), linkText: "Open the run" }));
   if (!hs.active && hs.staleMin > STALE_MINUTES && app.runs?.length) {
-    lines.push(slip({ kind: "error", text: `No successful check for ${Math.round(hs.staleMin)} minutes. The timer may have stopped; see Setup.` }));
+    lines.push(slip({ kind: "error", text: `No successful check for ${Math.round(hs.staleMin)} minutes. The timer may have stopped; see Settings.` }));
   }
   return lines;
 }
@@ -395,7 +383,7 @@ function renderShowtimes() {
       vox ? h("p", null, link(vox, "Open on VOX", { external: true })) : null,
     ], { wide: true, id: `st-${M.slugify(w.name)}` }));
   }
-  return { intro: "Filled: book now. Face-down: listed, not bookable yet. Struck through: sold out. Days with nothing to book are folded; tap to open.", leaves };
+  return { intro: "Blue times can be booked now. Grey times are listed but not bookable yet. Crossed-out times sold out. Tap a folded day to open it.", leaves };
 }
 
 /** A day with something bookable lies open; a day with nothing to book folds to one line. */
@@ -433,11 +421,11 @@ function timeChip(s) {
 function renderWatches() {
   if (app.edit) return { leaves: [renderEditor()] };
   const leaves = [...loadErrors("watches")];
-  if (!canWrite()) leaves.push(leaf("Read only", h("p", null, sampleMode ? "This is sample data." : "To add or change watches from here, add your GitHub token. ", sampleMode ? null : link("#setup", "Open Setup"))));
+  if (!canWrite()) leaves.push(leaf("Read only", h("p", null, sampleMode ? "This is sample data." : "To add or change watches from here, add your GitHub token. ", sampleMode ? null : link("#setup", "Open Settings"))));
   app.watches.forEach((w, i) => {
     const alerts = [w.alerts.bookingOpened && "booking opens", w.alerts.seatsReturned && "seats come back", w.alerts.newShowtimes && "new showtimes", w.alerts.soldOut && "sold out"].filter(Boolean);
     leaves.push(leaf(w.name, [
-      h("p", { class: `onoff ${w.enabled ? "is-on" : "is-off"}` }, w.enabled ? "Watching" : "Paused"),
+      h("p", null, h("span", { class: `pill ${w.enabled ? "pill--on" : "pill--off"}` }, w.enabled ? "Watching" : "Paused")),
       h("p", null, M.describeWatch(w, app.catalog)),
       h("p", { class: "muted" }, alerts.length ? `Alerts when ${alerts.join(", ")}.` : "All alerts are off."),
       h("div", { class: "actions" },
@@ -457,19 +445,18 @@ function startEdit(index) {
   app.edit = { index, draft, filter: "", errors: [], pending: false, confirmDelete: false };
   app.notice = null;
   if (location.hash !== "#watches") location.hash = "#watches";
-  else render(true);
+  else render();
 }
 
 function stopEdit(notice) {
   app.edit = null;
   app.notice = notice ?? null;
-  render(true);
+  render();
 }
 
 function chip(name, label, checked, onchange, { type = "checkbox", note } = {}) {
   return h("label", { class: "chip" },
     h("input", { type, name, checked, onchange: (e) => onchange(e.target.checked) }),
-    h("span", { class: "hole", "aria-hidden": "true" }),
     h("span", null, label, note ? h("span", { class: "muted" }, ` ${note}`) : null));
 }
 
@@ -510,7 +497,7 @@ function renderEditor() {
   const addExp = h("input", { type: "text", id: "add-exp", placeholder: "e.g. ScreenX", autocomplete: "off" });
 
   const form = h("form", { class: "editor", novalidate: true, onsubmit: (ev) => { ev.preventDefault(); saveDraft(); } },
-    e.errors.length ? h("div", { class: "errata", role: "alert" }, h("strong", null, "Fix before saving. "), e.errors.map((x) => x.message).join(" ")) : null,
+    e.errors.length ? h("div", { class: "notice notice--error", role: "alert" }, h("strong", null, "Fix before saving. "), e.errors.map((x) => x.message).join(" ")) : null,
 
     h("div", { class: "field" },
       h("label", { for: "w-name" }, "Name"),
@@ -584,7 +571,7 @@ function renderEditor() {
     h("div", { class: "actions editor-actions" },
       h("button", { class: "btn btn-primary", type: "submit", disabled: !canWrite() || e.pending, "aria-describedby": canWrite() ? null : "no-token" }, e.pending ? "Saving…" : "Save watch", arrow()),
       h("button", { class: "btn", type: "button", disabled: e.pending, onclick: () => stopEdit() }, "Cancel"),
-      canWrite() ? null : h("p", { class: "muted", id: "no-token" }, "Saving needs your GitHub token · ", link("#setup", "Add it in Setup"))),
+      canWrite() ? null : h("p", { class: "muted", id: "no-token" }, "Saving needs your GitHub token · ", link("#setup", "Add it in Settings"))),
     e.index >= 0 ? h("div", { class: "actions" },
       h("button", { class: `btn btn-danger${e.confirmDelete ? " is-armed" : ""}`, type: "button", disabled: !canWrite() || e.pending,
         onclick: () => { if (e.confirmDelete) deleteWatch(); else { e.confirmDelete = true; render(); } } }, e.confirmDelete ? "Tap again to delete this watch" : "Delete this watch")) : null);
@@ -677,7 +664,7 @@ function actionButton(id, label, fn, { requiresToken = true, primary = false } =
   const working = app.busy.has(id);
   return h("button", {
     class: `btn${primary ? " btn-primary" : ""}`, type: "button", disabled: blocked || working,
-    title: blocked ? "Needs your GitHub token (Setup)" : null, onclick: fn,
+    title: blocked ? "Needs your GitHub token (Settings)" : null, onclick: fn,
   }, working ? "Working…" : label);
 }
 
@@ -718,7 +705,7 @@ function renderInsights() {
           h("span", { class: "bar-label" }, d),
           h("span", { class: "sr-only" }, `: ${p.byDay[d]}`)))),
       h("figure", { class: "hours", "aria-label": "Openings by hour" },
-        h("div", { class: "hour-bars" }, p.byHour.map((n, hr) => h("span", { class: "hour", title: `${pad(hr)}:00 — ${n}`, style: { "--v": String(n / maxHour) } }))),
+        h("div", { class: "hour-bars" }, p.byHour.map((n, hr) => h("span", { class: "hour", title: `${pad(hr)}:00: ${n}`, style: { "--v": String(n / maxHour) } }))),
         h("figcaption", { class: "hour-axis", "aria-hidden": "true" }, h("span", null, "00"), h("span", null, "06"), h("span", null, "12"), h("span", null, "18"), h("span", null, "23"))),
     ], { wide: true }));
     leaves.push(leaf("Recent openings", h("ul", { class: "ledger" }, p.recent.map((o) => h("li", null,
@@ -738,6 +725,17 @@ const pad = (n) => String(n).padStart(2, "0");
 const monthOf = (iso) => ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"][Number(iso.slice(5, 7)) - 1];
 const dayLong = (d) => ({ Sat: "Saturdays", Sun: "Sundays", Mon: "Mondays", Tue: "Tuesdays", Wed: "Wednesdays", Thu: "Thursdays", Fri: "Fridays" })[d] ?? d;
 const minutes = (m) => (m < 90 ? `${Math.round(m)} min` : `${(m / 60).toFixed(1)} h`);
+
+// ---- Activity: what the watcher learned, then every change it saw -------------------------
+
+function renderActivity() {
+  const insights = renderInsights();
+  const log = renderLog();
+  return {
+    intro: "What the watcher has learned, and every change it noticed. Cairo time.",
+    leaves: [...insights.leaves, h("h2", { class: "section-label" }, "Recent changes"), ...log.leaves],
+  };
+}
 
 // ---- Log -----------------------------------------------------------------------------------
 
@@ -828,18 +826,18 @@ async function saveToken(token) {
 // ---- Routing and refresh -------------------------------------------------------------------
 
 function route() {
-  const id = location.hash.replace("#", "").split("/")[0] || "now";
+  const raw = location.hash.replace("#", "").split("/")[0] || "now";
+  const id = ALIASES[raw] ?? raw;
   const next = SECTIONS.some((s) => s.id === id) ? id : "now";
   const changed = next !== app.section;
   if (changed) { app.notice = null; if (next !== "watches") app.edit = null; }
   app.section = next;
-  render(changed);
+  render();
   if (changed) document.getElementById("main").focus({ preventScroll: true });
   if (changed) window.scrollTo({ top: 0 });
 }
 
 addEventListener("hashchange", route);
-darkQuery.addEventListener("change", () => render());
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && (!app.loadedAt || Date.now() - app.loadedAt > 60000)) load();
 });
