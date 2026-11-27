@@ -18,16 +18,22 @@ public sealed class WatchRunner(
 {
     private const int HealthAlertAfterFailures = 3;
     private static readonly TimeSpan HealthAlertAfter = TimeSpan.FromMinutes(15);
+    private static readonly TimeSpan SeatsAlertCooldown = TimeSpan.FromHours(3);
+    private const int MaxPendingAlerts = 20;
 
     private readonly DateTime _nowLocal = TimeZoneInfo.ConvertTime(now, tz).DateTime;
     private DateOnly Today => DateOnly.FromDateTime(_nowLocal);
     private List<CatalogItem> _cinemas = [];
     private List<CatalogItem> _movies = [];
+    private readonly List<Notification> _pending = [];
 
     public async Task RunAsync(CancellationToken ct)
     {
         var state = store.Load();
         var log = new List<string>();
+
+        // Alerts ntfy refused last time go out first, before anything new.
+        foreach (var n in state.PendingAlerts) await SendAsync(n, ct);
 
         try
         {
@@ -48,8 +54,26 @@ public sealed class WatchRunner(
         }
 
         store.AppendEvents(log);
+        state.PendingAlerts = [.. _pending.TakeLast(MaxPendingAlerts)];
         store.Save(state);
         store.WriteText("INSIGHTS.md", InsightsWriter.Build(state, config, tz, Today));
+    }
+
+    /// <summary>
+    /// A refused push (ntfy rate limit, network blip) must not crash the run: the run would then not save
+    /// its state, and every change it found would be announced again. The alert is kept for the next run.
+    /// </summary>
+    private async Task SendAsync(Notification n, CancellationToken ct)
+    {
+        try
+        {
+            await notifier.SendAsync(n, ct);
+        }
+        catch (Exception ex) when (ex is HttpRequestException or TaskCanceledException && !ct.IsCancellationRequested)
+        {
+            Console.WriteLine($"  Could not send \"{n.Title}\" ({ex.Message}). It will be sent again on the next run.");
+            _pending.Add(n);
+        }
     }
 
     public async Task PrintCatalogAsync(CancellationToken ct)
@@ -97,7 +121,7 @@ public sealed class WatchRunner(
             var watched = watches.Any(w => w.Movies.Contains(m.Slug, StringComparer.OrdinalIgnoreCase));
             if (watched || config.AnnounceNewMovies)
             {
-                await notifier.SendAsync(new Notification(
+                await SendAsync(new Notification(
                     $"New on VOX: {m.Name}",
                     watched ? "A movie you are watching is now on the VOX site. Showtimes alerts are active." : "A new movie was added to the VOX site.",
                     watched ? 4 : 2, ["clapper"], VoxUrls.Showtimes(config.Site, [], [m.Slug], null).ToString()), ct);
@@ -136,7 +160,7 @@ public sealed class WatchRunner(
 
         if (isNew)
         {
-            await notifier.SendAsync(MessageComposer.Baseline(watch, datesInScope.Count, showtimes, warnings, Url), ct);
+            await SendAsync(MessageComposer.Baseline(watch, datesInScope.Count, showtimes, warnings, Url), ct);
             return;
         }
 
@@ -153,8 +177,8 @@ public sealed class WatchRunner(
         if (state.Openings.Count > 300) state.Openings.RemoveRange(0, state.Openings.Count - 300);
         if (state.SellOuts.Count > 500) state.SellOuts.RemoveRange(0, state.SellOuts.Count - 500);
 
-        foreach (var n in MessageComposer.Compose(watch, changes, Url))
-            await notifier.SendAsync(n, ct);
+        foreach (var n in MessageComposer.Compose(watch, ChangeDetector.ThrottleSeatsReturned(watchState, changes, now, SeatsAlertCooldown), Url))
+            await SendAsync(n, ct);
     }
 
     /// <summary>
@@ -216,7 +240,7 @@ public sealed class WatchRunner(
         if (health.ConsecutiveFailures >= HealthAlertAfterFailures && failingFor >= HealthAlertAfter && !health.Alerted)
         {
             health.Alerted = true;
-            await notifier.SendAsync(new Notification("VOX watcher has a problem",
+            await SendAsync(new Notification("VOX watcher has a problem",
                 $"{health.ConsecutiveFailures} checks failed in a row over {failingFor.TotalMinutes:0} minutes.\n{error}\nYou will get a message when it works again.",
                 4, ["warning"]), ct);
         }
@@ -225,7 +249,7 @@ public sealed class WatchRunner(
     private async Task RecoverHealthAsync(WatcherState state, CancellationToken ct)
     {
         if (state.Health.Alerted)
-            await notifier.SendAsync(new Notification("VOX watcher is working again", "Checks are back to normal.", 2, ["white_check_mark"]), ct);
+            await SendAsync(new Notification("VOX watcher is working again", "Checks are back to normal.", 2, ["white_check_mark"]), ct);
 
         state.Health = new HealthState();
     }

@@ -39,8 +39,27 @@ public sealed class ConsoleNotifier : INotifier
 public sealed class NtfyNotifier(string server, string topic, string? token) : INotifier
 {
     private static readonly HttpClient Client = new() { Timeout = TimeSpan.FromSeconds(20) };
+    private static readonly TimeSpan[] RetryDelays = [TimeSpan.FromSeconds(5), TimeSpan.FromSeconds(15)];
 
     public async Task SendAsync(Notification n, CancellationToken ct)
+    {
+        for (var attempt = 0; ; attempt++)
+        {
+            using var response = await PostAsync(n, ct);
+            Console.WriteLine($"  ntfy -> {(int)response.StatusCode} ({n.Title})");
+            var retryable = (int)response.StatusCode == 429 || (int)response.StatusCode >= 500;
+            if (!retryable || attempt >= RetryDelays.Length)
+            {
+                response.EnsureSuccessStatusCode();
+                return;
+            }
+
+            var wait = response.Headers.RetryAfter?.Delta ?? RetryDelays[attempt];
+            await Task.Delay(wait > TimeSpan.FromSeconds(30) ? TimeSpan.FromSeconds(30) : wait, ct);
+        }
+    }
+
+    private Task<HttpResponseMessage> PostAsync(Notification n, CancellationToken ct)
     {
         var payload = new NtfyMessage(
             Topic: topic,
@@ -51,16 +70,14 @@ public sealed class NtfyNotifier(string server, string topic, string? token) : I
             Click: n.Click,
             Actions: n.Actions?.Take(3).Select(a => new NtfyAction("view", a.Label, a.Url, true)).ToList());
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, server.TrimEnd('/'))
+        var request = new HttpRequestMessage(HttpMethod.Post, server.TrimEnd('/'))
         {
             Content = JsonContent.Create(payload)
         };
         if (!string.IsNullOrWhiteSpace(token))
             request.Headers.Authorization = new("Bearer", token);
 
-        using var response = await Client.SendAsync(request, ct);
-        Console.WriteLine($"  ntfy -> {(int)response.StatusCode} ({n.Title})");
-        response.EnsureSuccessStatusCode();
+        return Client.SendAsync(request, ct);
     }
 
     private sealed record NtfyMessage(
