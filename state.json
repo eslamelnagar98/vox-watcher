@@ -518,10 +518,11 @@
           "Experience": "GOLD",
           "Date": "2026-12-21",
           "Time": "23:00:00",
-          "Bookable": true,
+          "Bookable": false,
           "EverBookable": true,
           "FirstSeen": "2026-11-26T13:36:35.7870605+00:00",
           "OpenedAt": "2026-11-27T00:20:36.0697174+00:00",
+          "SoldOutAt": "2026-11-28T13:50:47.2339087+00:00",
           "SeatsAlertedAt": "2026-11-28T13:15:27.5931234+00:00"
         },
         "0047-276951": {
@@ -5467,6 +5468,13 @@
       "Experience": "GOLD",
       "Date": "2026-12-21",
       "MinutesBookable": 2235
+    },
+    {
+      "Movie": "Avengers: Doomsday",
+      "Cinema": "City Centre Almaza",
+      "Experience": "GOLD",
+      "Date": "2026-12-21",
+      "MinutesBookable": 2250.2
     }
   ],
   "PendingAlerts": []
