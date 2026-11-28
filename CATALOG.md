@@ -19,7 +19,6 @@ Copy these slugs into `watches.json`. Source: https://egy.voxcinemas.com/showtim
 | `lela-bazit-khalis-arabic` | (Arabic) Lela Bazit Khalis |
 | `matloub-3a2eleyain-arabic` | (Arabic) Matloub 3a2eleyain |
 | `sophia-arabic` | (Arabic) Sophia |
-| `the-cat-in-the-hat-arabic` | (Arabic) The Cat In The Hat |
 | `wala-kan-ala-el-bal-arabic` | (Arabic) Wala Kan Ala El-Bal |
 | `godzilla-minus-zero-japanese` | (Japanese) Godzilla Minus Zero |
 | `avengers-doomsday` | Avengers: Doomsday |
